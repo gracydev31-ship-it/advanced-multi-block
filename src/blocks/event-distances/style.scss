@@ -1,0 +1,35 @@
+/* frontend style */
+.runpartner-event-distances {
+	margin: 1rem 0;
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.runpartner-event-label {
+	font-weight: 600;
+	color: var(--wp--preset--color--accent-4);
+}
+
+.runpartner-event-distances .dashicons-list-view {
+	color: var(--wp--preset--color--accent-1);
+}
+
+.runpartner-event-distances-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: inline-flex;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.runpartner-event-distance-item {
+	display: inline-block;
+	padding: 4px 12px;
+	background: var(--wp--preset--color--accent-5);
+	color: var(--wp--preset--color--base);
+	font-size: var(--wp--preset--font-size--small);
+	border-radius: 12px;
+}

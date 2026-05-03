@@ -1,0 +1,22 @@
+/* frontend style */
+.runpartner-event-year {
+	margin: 1rem 0;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.runpartner-event-label {
+	font-weight: 600;
+	margin-right: 4px;
+	color: var(--wp--preset--color--accent-4);
+}
+
+.runpartner-event-year-text {
+	font-size: var(--wp--preset--font-size--medium);
+	color: var(--wp--preset--color--contrast);
+}
+
+.runpartner-event-year .dashicons-calendar {
+	color: var(--wp--preset--color--accent-1);
+}

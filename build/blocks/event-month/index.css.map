@@ -1,0 +1,1 @@
+{"version":3,"file":"blocks/event-month/index.css","mappings":";;;AAAA;AACA;EACC;EACA;EACA;AACD,C","sources":["webpack://advanced-multi-block/./src/blocks/event-month/editor.scss"],"sourcesContent":["/* editor style */\n.runpartner-event-month-block {\n\tpadding: 16px;\n\tbackground: var(--wp--preset--color--accent-5);\n\tborder-radius: 8px;\n}\n"],"names":[],"sourceRoot":""}

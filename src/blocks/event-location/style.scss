@@ -10,6 +10,12 @@
 	margin: 1rem 0;
 }
 
+.runpartner-event-label {
+	font-weight: 600;
+	margin-right: 4px;
+	color: var(--wp--preset--color--accent-4);
+}
+
 .runpartner-event-location-name,
 .runpartner-event-location-country {
 	font-size: 1rem;
@@ -26,5 +32,5 @@
 .runpartner-event-location .dashicons-location {
 	vertical-align: middle;
 	margin-right: 8px;
-	color: var(--wp--preset--color--lime-green);
+	color: var(--wp--preset--color--accent-1);
 }

@@ -23,6 +23,27 @@ return array(
 		'render' => 'file:./render.php',
 		'viewScript' => 'file:./view.js'
 	),
+	'event-distances' => array(
+		'$schema' => 'https://schemas.wp.org/trunk/block.json',
+		'apiVersion' => 3,
+		'name' => 'runpartner/event-distances',
+		'version' => '0.1.0',
+		'title' => 'Event Distances',
+		'category' => 'widgets',
+		'icon' => 'list-view',
+		'description' => 'Display the available race distances from post meta.',
+		'example' => array(
+			
+		),
+		'supports' => array(
+			'html' => false
+		),
+		'textdomain' => 'runpartner',
+		'editorScript' => 'file:./index.js',
+		'editorStyle' => 'file:./index.css',
+		'style' => 'file:./style-index.css',
+		'render' => 'file:./render.php'
+	),
 	'event-location' => array(
 		'$schema' => 'https://schemas.wp.org/trunk/block.json',
 		'apiVersion' => 3,
@@ -44,6 +65,48 @@ return array(
 		'style' => 'file:./style-index.css',
 		'render' => 'file:./render.php'
 	),
+	'event-month' => array(
+		'$schema' => 'https://schemas.wp.org/trunk/block.json',
+		'apiVersion' => 3,
+		'name' => 'runpartner/event-month',
+		'version' => '0.1.0',
+		'title' => 'Event Month',
+		'category' => 'widgets',
+		'icon' => 'calendar-alt',
+		'description' => 'Display the event conducted month from post meta.',
+		'example' => array(
+			
+		),
+		'supports' => array(
+			'html' => false
+		),
+		'textdomain' => 'runpartner',
+		'editorScript' => 'file:./index.js',
+		'editorStyle' => 'file:./index.css',
+		'style' => 'file:./style-index.css',
+		'render' => 'file:./render.php'
+	),
+	'event-registration' => array(
+		'$schema' => 'https://schemas.wp.org/trunk/block.json',
+		'apiVersion' => 3,
+		'name' => 'runpartner/event-registration',
+		'version' => '0.1.0',
+		'title' => 'Event Registration',
+		'category' => 'widgets',
+		'icon' => 'clipboard',
+		'description' => 'Display the event registration link as a button from post meta.',
+		'example' => array(
+			
+		),
+		'supports' => array(
+			'html' => false
+		),
+		'textdomain' => 'runpartner',
+		'editorScript' => 'file:./index.js',
+		'editorStyle' => 'file:./index.css',
+		'style' => 'file:./style-index.css',
+		'render' => 'file:./render.php'
+	),
 	'event-subtitle' => array(
 		'$schema' => 'https://schemas.wp.org/trunk/block.json',
 		'apiVersion' => 3,
@@ -53,6 +116,48 @@ return array(
 		'category' => 'widgets',
 		'icon' => 'editor-italic',
 		'description' => 'Display the event subtitle from post meta.',
+		'example' => array(
+			
+		),
+		'supports' => array(
+			'html' => false
+		),
+		'textdomain' => 'runpartner',
+		'editorScript' => 'file:./index.js',
+		'editorStyle' => 'file:./index.css',
+		'style' => 'file:./style-index.css',
+		'render' => 'file:./render.php'
+	),
+	'event-website' => array(
+		'$schema' => 'https://schemas.wp.org/trunk/block.json',
+		'apiVersion' => 3,
+		'name' => 'runpartner/event-website',
+		'version' => '0.1.0',
+		'title' => 'Event Website',
+		'category' => 'widgets',
+		'icon' => 'admin-links',
+		'description' => 'Display the event official website link from post meta.',
+		'example' => array(
+			
+		),
+		'supports' => array(
+			'html' => false
+		),
+		'textdomain' => 'runpartner',
+		'editorScript' => 'file:./index.js',
+		'editorStyle' => 'file:./index.css',
+		'style' => 'file:./style-index.css',
+		'render' => 'file:./render.php'
+	),
+	'event-year' => array(
+		'$schema' => 'https://schemas.wp.org/trunk/block.json',
+		'apiVersion' => 3,
+		'name' => 'runpartner/event-year',
+		'version' => '0.1.0',
+		'title' => 'Event Year',
+		'category' => 'widgets',
+		'icon' => 'calendar',
+		'description' => 'Display the first edition year of the event from post meta.',
 		'example' => array(
 			
 		),

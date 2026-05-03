@@ -1,0 +1,19 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "runpartner/event-website",
+	"version": "0.1.0",
+	"title": "Event Website",
+	"category": "widgets",
+	"icon": "admin-links",
+	"description": "Display the event official website link from post meta.",
+	"example": {},
+	"supports": {
+		"html": false
+	},
+	"textdomain": "runpartner",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"render": "file:./render.php"
+}
