@@ -27,16 +27,13 @@ $country  = esc_html( $country );
 ?>
 
 <div <?php echo get_block_wrapper_attributes( array( 'class' => 'runpartner-event-location' ) ); ?>>
-	<?php if ( $location ) : ?>
-		<p class="runpartner-event-location-name">
-			<span class="dashicons dashicons-location" aria-hidden="true"></span>
-			<?php echo $location; ?>
-		</p>
-	<?php endif; ?>
-
-	<?php if ( $country ) : ?>
-		<p class="runpartner-event-location-country">
-			<?php echo $country; ?>
-		</p>
+	<span class="dashicons dashicons-location" aria-hidden="true"></span>
+	<?php if ( $location && $country ) : ?>
+		<span class="runpartner-event-location-name"><?php echo $location; ?></span>,
+		<span class="runpartner-event-location-country"><?php echo $country; ?></span>
+	<?php elseif ( $location ) : ?>
+		<span class="runpartner-event-location-name"><?php echo $location; ?></span>
+	<?php elseif ( $country ) : ?>
+		<span class="runpartner-event-location-country"><?php echo $country; ?></span>
 	<?php endif; ?>
 </div>
