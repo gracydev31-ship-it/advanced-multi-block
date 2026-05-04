@@ -1,27 +1,27 @@
-/* frontend style */
 .runpartner-event-registration {
-	margin: 1rem 0;
+	margin: 0;
 }
 
 .runpartner-event-registration-button {
 	display: inline-flex;
 	align-items: center;
-	gap: 8px;
-	padding: var(--wp--preset--spacing--30) var(--wp--preset--spacing--40);
+	justify-content: center;
+	gap: 0;
+	padding: 0.875rem 2.25rem;
 	background: var(--wp--preset--color--orange);
 	color: var(--wp--preset--color--base);
 	font-size: var(--wp--preset--font-size--medium);
 	font-weight: 600;
+	letter-spacing: 0.02em;
 	text-decoration: none;
-	border-radius: 4px;
-	transition: opacity 0.2s ease;
+	border: none;
+	border-radius: 6px;
+	transition: all 0.2s ease;
 }
 
 .runpartner-event-registration-button:hover {
-	opacity: 0.9;
+	background: color-mix(in srgb, var(--wp--preset--color--orange) 80%, var(--wp--preset--color--contrast));
 	color: var(--wp--preset--color--base);
-}
-
-.runpartner-event-registration-button .dashicons-clipboard {
-	color: var(--wp--preset--color--base);
+	box-shadow: var(--wp--preset--shadow--glow-accent);
+	transform: translateY(-1px);
 }

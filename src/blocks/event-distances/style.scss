@@ -1,35 +1,34 @@
-/* frontend style */
 .runpartner-event-distances {
-	margin: 1rem 0;
-	display: flex;
-	align-items: flex-start;
-	gap: 8px;
-	flex-wrap: wrap;
+	margin: 0;
 }
 
-.runpartner-event-label {
+.runpartner-event-meta-label {
+	display: block;
+	font-size: 0.6875rem;
 	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
 	color: var(--wp--preset--color--accent-4);
-}
-
-.runpartner-event-distances .dashicons-list-view {
-	color: var(--wp--preset--color--accent-1);
+	margin-bottom: 8px;
 }
 
 .runpartner-event-distances-list {
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	display: inline-flex;
+	display: flex;
 	gap: 8px;
 	flex-wrap: wrap;
 }
 
 .runpartner-event-distance-item {
 	display: inline-block;
-	padding: 4px 12px;
-	background: var(--wp--preset--color--accent-5);
-	color: var(--wp--preset--color--base);
+	padding: 4px 14px;
+	background: transparent;
+	color: var(--wp--preset--color--lime-green);
 	font-size: var(--wp--preset--font-size--small);
-	border-radius: 12px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	border: 1px solid var(--wp--preset--color--lime-green);
+	border-radius: 4px;
 }
