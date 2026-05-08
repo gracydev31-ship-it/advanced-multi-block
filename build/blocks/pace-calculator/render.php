@@ -8,22 +8,38 @@ $race_distances = [ 5 => '5K', 10 => '10K', 21 => 'Half Marathon', 42 => 'Marath
 $default_pace_seconds = 8 * 60 + 0;
 $offsets = [ -10, -5, 0, 5, 10 ];
 
-function format_cell_time( $total_minutes ) {
-	if ( $total_minutes <= 0 ) {
-		return '--:--';
+wp_interactivity_state(
+	'runpartner',
+	array(
+		'paceOffsets'  => $offsets,
+		'defaultPace'  => 8 * 60,
+	)
+);
+
+$initial_context = array(
+	'paceMinutes' => 8,
+	'paceSeconds' => 0,
+	'unit'        => 'km',
+);
+
+if ( ! function_exists( 'runpartner_format_cell_time' ) ) {
+	function runpartner_format_cell_time( $total_minutes ) {
+		if ( $total_minutes <= 0 ) {
+			return '--:--';
+		}
+		$total_seconds = round( $total_minutes * 60 );
+		$hours = floor( $total_seconds / 3600 );
+		$minutes = floor( ( $total_seconds % 3600 ) / 60 );
+		$seconds = $total_seconds % 60;
+		if ( $hours > 0 ) {
+			return sprintf( '%d:%02d:%02d', $hours, $minutes, $seconds );
+		}
+		return sprintf( '%d:%02d', $minutes, $seconds );
 	}
-	$total_seconds = round( $total_minutes * 60 );
-	$hours = floor( $total_seconds / 3600 );
-	$minutes = floor( ( $total_seconds % 3600 ) / 60 );
-	$seconds = $total_seconds % 60;
-	if ( $hours > 0 ) {
-		return sprintf( '%d:%02d:%02d', $hours, $minutes, $seconds );
-	}
-	return sprintf( '%d:%02d', $minutes, $seconds );
 }
 ?>
 
-<div <?php echo $wrapper_attributes; ?> data-wp-interactive="runpartner">
+<div <?php echo $wrapper_attributes; ?> data-wp-interactive="runpartner" <?php echo wp_interactivity_data_wp_context( $initial_context ); ?>>
 	<div class="rp-pace-inputs">
 		<label>
 			<span class="rp-pace-label"><?php esc_html_e( 'Pace', 'runpartner' ); ?></span>
@@ -33,7 +49,7 @@ function format_cell_time( $total_minutes ) {
 				max="59"
 				value="8"
 				class="rp-pace-minutes"
-				data-wp-bind--value="state.paceMinutes"
+				data-wp-bind--value="context.paceMinutes"
 				data-wp-on--input="actions.setPaceMinutes"
 			/>
 			<span class="rp-pace-separator">:</span>
@@ -43,7 +59,7 @@ function format_cell_time( $total_minutes ) {
 				max="59"
 				value="0"
 				class="rp-pace-seconds"
-				data-wp-bind--value="state.paceSeconds"
+				data-wp-bind--value="context.paceSeconds"
 				data-wp-on--input="actions.setPaceSeconds"
 			/>
 		</label>
@@ -93,7 +109,7 @@ function format_cell_time( $total_minutes ) {
 						<?php else :
 							$total_minutes = ( $cell_seconds / 60 ) * $km;
 						?>
-						<td><?php echo format_cell_time( $total_minutes ); ?></td>
+						<td><?php echo runpartner_format_cell_time( $total_minutes ); ?></td>
 						<?php endif; ?>
 					<?php endforeach; ?>
 				</tr>
