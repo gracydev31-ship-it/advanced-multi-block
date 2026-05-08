@@ -1,5 +1,5 @@
 .wp-block-runpartner-pace-calculator {
-	max-width: 480px;
+	max-width: 720px;
 }
 
 .rp-pace-inputs {
@@ -56,29 +56,62 @@
 	background: color-mix(in srgb, var(--wp--preset--color--contrast) 5%, transparent);
 }
 
+.rp-table-wrap {
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
 .rp-pace-table {
 	width: 100%;
 	border-collapse: collapse;
+	min-width: 480px;
 }
 
 .rp-pace-table th {
-	text-align: left;
+	text-align: center;
 	font-size: 0.75rem;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
 	color: var(--wp--preset--color--accent-4);
-	padding-bottom: 0.5rem;
+	padding: 0.5rem 0.4rem;
 	border-bottom: 1px solid var(--wp--preset--color--accent-6);
+}
+
+.rp-pace-table th:first-child {
+	text-align: left;
 }
 
 .rp-pace-table td {
-	padding: 0.6rem 0;
+	text-align: center;
+	padding: 0.4rem 0.4rem;
 	border-bottom: 1px solid var(--wp--preset--color--accent-6);
-	font-size: var(--wp--preset--font-size--medium);
+	font-size: 0.875rem;
+	font-weight: 400;
 }
 
-.rp-pace-table td:last-child {
-	font-family: var(--wp--preset--font-family--fira-code);
+.rp-pace-table td:first-child {
+	text-align: left;
 	font-weight: 500;
+	font-size: 0.8125rem;
+	white-space: nowrap;
+}
+
+.rp-pace-table td:not(:first-child) {
+	font-family: var(--wp--preset--font-family--fira-code);
+}
+
+.rp-col-active {
+	background: color-mix(in srgb, var(--wp--preset--color--contrast) 4%, transparent);
+	border-left: 1px solid color-mix(in srgb, var(--wp--preset--color--contrast) 15%, transparent);
+	border-right: 1px solid color-mix(in srgb, var(--wp--preset--color--contrast) 15%, transparent);
+	font-weight: 600;
+}
+
+.rp-row-race td {
+	font-weight: 600;
+}
+
+.rp-row-race td:first-child {
+	color: var(--wp--preset--color--lime-green);
 }

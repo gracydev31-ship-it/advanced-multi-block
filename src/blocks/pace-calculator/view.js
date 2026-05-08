@@ -2,56 +2,70 @@ import { store } from '@wordpress/interactivity';
 
 function formatTime( totalMinutes ) {
 	if ( ! totalMinutes || totalMinutes <= 0 ) return '--:--';
-	const hours = Math.floor( totalMinutes / 60 );
-	const minutes = Math.floor( totalMinutes % 60 );
-	const seconds = Math.round( ( totalMinutes % 1 ) * 60 );
+	const totalSeconds = Math.round( totalMinutes * 60 );
+	const hours = Math.floor( totalSeconds / 3600 );
+	const minutes = Math.floor( ( totalSeconds % 3600 ) / 60 );
+	const seconds = totalSeconds % 60;
 	if ( hours > 0 ) {
 		return `${ hours }:${ String( minutes ).padStart( 2, '0' ) }:${ String( seconds ).padStart( 2, '0' ) }`;
 	}
 	return `${ minutes }:${ String( seconds ).padStart( 2, '0' ) }`;
 }
 
-const distances = {
-	mi: [
-		{ label: '5K', value: 3.107 },
-		{ label: '10K', value: 6.214 },
-		{ label: 'Half Marathon', value: 13.109 },
-		{ label: 'Marathon', value: 26.219 },
-	],
-	km: [
-		{ label: '5K', value: 5 },
-		{ label: '10K', value: 10 },
-		{ label: 'Half Marathon', value: 21.0975 },
-		{ label: 'Marathon', value: 42.195 },
-	],
-};
+function formatPace( totalSeconds ) {
+	if ( totalSeconds <= 0 ) return '0:00';
+	const minutes = Math.floor( totalSeconds / 60 );
+	const seconds = totalSeconds % 60;
+	return `${ minutes }:${ String( seconds ).padStart( 2, '0' ) }`;
+}
+
+function generateDistances() {
+	const raceKm = [ 5, 10, 21.0975, 42.195 ];
+	const raceLabels = [ '5K', '10K', 'Half Marathon', 'Marathon' ];
+	const result = [];
+	for ( let i = 1; i <= 50; i++ ) {
+		const km = i;
+		const label = km + 'K';
+		const raceIdx = raceKm.findIndex( r => Math.abs( r - km ) < 0.01 );
+		result.push( {
+			label: raceIdx !== -1 ? raceLabels[ raceIdx ] : label,
+			km,
+			mi: km * 0.621371,
+			race: raceIdx !== -1,
+		} );
+	}
+	// Add exact race distance entries (override the integer approximations)
+	result[ 4 ] = { label: '5K', km: 5, mi: 3.107, race: true };
+	result[ 9 ] = { label: '10K', km: 10, mi: 6.214, race: true };
+	result[ 20 ] = { label: 'Half Marathon', km: 21.0975, mi: 13.109, race: true };
+	result[ 41 ] = { label: 'Marathon', km: 42.195, mi: 26.219, race: true };
+	return result;
+}
+
+const distances = generateDistances();
+
+const offsets = [ -10, -5, 0, 5, 10 ];
+
+function getValue( d, unit ) {
+	return unit === 'km' ? d.km : d.mi;
+}
 
 const { state } = store( 'runpartner', {
 	state: {
 		paceMinutes: 8,
 		paceSeconds: 0,
 		unit: 'km',
-		get paceMinutesPerUnit() {
-			return state.paceMinutes + state.paceSeconds / 60;
-		},
 		get unitLabel() {
 			return state.unit;
 		},
 		get unitToggleLabel() {
 			return state.unit === 'mi' ? 'Switch to km' : 'Switch to mi';
 		},
-		get time5K() {
-			return formatTime( state.paceMinutesPerUnit * distances[ state.unit ][ 0 ].value );
-		},
-		get time10K() {
-			return formatTime( state.paceMinutesPerUnit * distances[ state.unit ][ 1 ].value );
-		},
-		get timeHalf() {
-			return formatTime( state.paceMinutesPerUnit * distances[ state.unit ][ 2 ].value );
-		},
-		get timeMarathon() {
-			return formatTime( state.paceMinutesPerUnit * distances[ state.unit ][ 3 ].value );
-		},
+		get col0() { return formatPace( state.paceMinutes * 60 + state.paceSeconds + offsets[ 0 ] ); },
+		get col1() { return formatPace( state.paceMinutes * 60 + state.paceSeconds + offsets[ 1 ] ); },
+		get col2() { return formatPace( state.paceMinutes * 60 + state.paceSeconds + offsets[ 2 ] ); },
+		get col3() { return formatPace( state.paceMinutes * 60 + state.paceSeconds + offsets[ 3 ] ); },
+		get col4() { return formatPace( state.paceMinutes * 60 + state.paceSeconds + offsets[ 4 ] ); },
 	},
 	actions: {
 		setPaceMinutes( event ) {
@@ -62,6 +76,26 @@ const { state } = store( 'runpartner', {
 		},
 		toggleUnit() {
 			state.unit = state.unit === 'mi' ? 'km' : 'mi';
+		},
+	},
+	callbacks: {
+		renderRows() {
+			const tbody = document.querySelector( '.wp-block-runpartner-pace-calculator .rp-pace-table tbody' );
+			if ( ! tbody ) return;
+
+			const paceSeconds = state.paceMinutes * 60 + state.paceSeconds;
+			const rows = distances.map( ( d ) => {
+				const cells = offsets.map( ( offset ) => {
+					const totalSeconds = paceSeconds + offset;
+					if ( totalSeconds <= 0 ) return '<td>--:--</td>';
+					const totalMinutes = ( totalSeconds / 60 ) * getValue( d, state.unit );
+					return '<td>' + formatTime( totalMinutes ) + '</td>';
+				} ).join( '' );
+				const cls = d.race ? ' class="rp-row-race"' : '';
+				return '<tr' + cls + '><td>' + d.label + '</td>' + cells + '</tr>';
+			} ).join( '' );
+
+			tbody.innerHTML = rows;
 		},
 	},
 } );
