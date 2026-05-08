@@ -19,7 +19,7 @@ function formatPace( totalSeconds ) {
 	return `${ minutes }:${ String( seconds ).padStart( 2, '0' ) }`;
 }
 
-function generateDistances() {
+function generateAllDistances() {
 	const raceKm = [ 5, 10, 21.0975, 42.195 ];
 	const raceLabels = [ '5K', '10K', 'Half Marathon', 'Marathon' ];
 	const result = [];
@@ -41,11 +41,31 @@ function generateDistances() {
 	return result;
 }
 
-const distances = generateDistances();
+const keyDistances = [
+	{ label: '5K', km: 5, mi: 3.107, race: true },
+	{ label: '10K', km: 10, mi: 6.214, race: true },
+	{ label: 'Half Marathon', km: 21.0975, mi: 13.109, race: true },
+	{ label: 'Marathon', km: 42.195, mi: 26.219, race: true },
+];
+
+const allDistances = generateAllDistances();
 const offsets = [ -10, -5, 0, 5, 10 ];
 
 function getValue( d, unit ) {
 	return unit === 'km' ? d.km : d.mi;
+}
+
+function generateRows( distancesList, paceSeconds, unit ) {
+	return distancesList.map( ( d ) => {
+		const cells = offsets.map( ( offset ) => {
+			const totalSeconds = paceSeconds + offset;
+			if ( totalSeconds <= 0 ) return '<td>--:--</td>';
+			const totalMinutes = ( totalSeconds / 60 ) * getValue( d, unit );
+			return '<td>' + formatTime( totalMinutes ) + '</td>';
+		} ).join( '' );
+		const cls = d.race ? ' class="rp-row-race"' : '';
+		return '<tr' + cls + '><td>' + d.label + '</td>' + cells + '</tr>';
+	} ).join( '' );
 }
 
 function getCurrentPaceSeconds() {
@@ -62,6 +82,10 @@ store( 'runpartner', {
 		get unitToggleLabel() {
 			const context = getContext();
 			return context.unit === 'mi' ? 'Switch to km' : 'Switch to mi';
+		},
+		get toggleLabel() {
+			const context = getContext();
+			return context.showFullTable ? 'Hide full breakdown' : 'Show full 1K–50K breakdown';
 		},
 		get col0() { return formatPace( getCurrentPaceSeconds() + offsets[ 0 ] ); },
 		get col1() { return formatPace( getCurrentPaceSeconds() + offsets[ 1 ] ); },
@@ -82,6 +106,10 @@ store( 'runpartner', {
 			const context = getContext();
 			context.unit = context.unit === 'mi' ? 'km' : 'mi';
 		},
+		toggleFullTable() {
+			const context = getContext();
+			context.showFullTable = ! context.showFullTable;
+		},
 	},
 	callbacks: {
 		renderRows() {
@@ -92,18 +120,14 @@ store( 'runpartner', {
 			const paceSeconds = ( context.paceMinutes || 0 ) * 60 + ( context.paceSeconds || 0 );
 			const unit = context.unit || 'km';
 
-			const rows = distances.map( ( d ) => {
-				const cells = offsets.map( ( offset ) => {
-					const totalSeconds = paceSeconds + offset;
-					if ( totalSeconds <= 0 ) return '<td>--:--</td>';
-					const totalMinutes = ( totalSeconds / 60 ) * getValue( d, unit );
-					return '<td>' + formatTime( totalMinutes ) + '</td>';
-				} ).join( '' );
-				const cls = d.race ? ' class="rp-row-race"' : '';
-				return '<tr' + cls + '><td>' + d.label + '</td>' + cells + '</tr>';
-			} ).join( '' );
+			const keyTbody = ref.querySelector( '.rp-key-tbody' );
+			const fullTbody = ref.querySelector( '.rp-full-tbody' );
 
-			ref.innerHTML = rows;
+			const keyHtml = generateRows( keyDistances, paceSeconds, unit );
+			const fullHtml = generateRows( allDistances, paceSeconds, unit );
+
+			if ( keyTbody ) keyTbody.innerHTML = keyHtml;
+			if ( fullTbody ) fullTbody.innerHTML = fullHtml;
 		},
 	},
 } );
