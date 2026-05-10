@@ -1,0 +1,165 @@
+.runpartner-coach-header {
+	margin: 0;
+
+	.coach-header-subtitle {
+		font-size: var(--wp--preset--font-size--medium);
+		font-weight: 300;
+		font-style: italic;
+		color: var(--wp--preset--color--accent-4);
+		line-height: 1.5;
+		margin-bottom: 0.5em;
+		letter-spacing: 0.01em;
+	}
+
+	.coach-header-top {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.3em 0.5em;
+		margin-bottom: 1.25rem;
+	}
+
+	.coach-header-title {
+		font-size: var(--wp--preset--font-size--x-large);
+		font-weight: 700;
+		color: var(--wp--preset--color--contrast);
+		line-height: 1.2;
+	}
+
+	.coach-header-years {
+		font-size: var(--wp--preset--font-size--large);
+		font-weight: 300;
+		color: var(--wp--preset--color--accent-4);
+	}
+
+	.coach-header-nationality {
+		font-size: var(--wp--preset--font-size--large);
+		font-weight: 300;
+		color: var(--wp--preset--color--accent-4);
+	}
+
+	.coach-header-section {
+		margin-top: 1.25rem;
+		border-left: 2px solid color-mix(in srgb, var(--wp--preset--color--accent-4) 15%, transparent);
+		transition: border-color 0.3s ease;
+	}
+
+	.coach-header-section.is-open {
+		border-left-color: color-mix(in srgb, var(--wp--preset--color--accent-3) 40%, transparent);
+	}
+
+	.coach-header-section-title {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5em;
+		width: 100%;
+		padding: 0.75rem 1rem;
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: var(--wp--preset--font-size--small);
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--wp--preset--color--accent-4);
+		text-align: left;
+		transition: color 0.3s ease;
+		font-family: inherit;
+
+		&:hover {
+			color: var(--wp--preset--color--contrast);
+		}
+	}
+
+	.coach-header-accordion-icon {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 1.5em;
+		height: 1.5em;
+		border-radius: 50%;
+		background: color-mix(in srgb, var(--wp--preset--color--accent-4) 10%, transparent);
+		transition: background 0.3s ease;
+	}
+
+	.coach-header-accordion-icon::after {
+		content: '+';
+		display: block;
+		font-size: 1.1em;
+		font-weight: 300;
+		line-height: 1;
+		color: var(--wp--preset--color--accent-4);
+		transition: transform 0.35s ease;
+	}
+
+	.is-open .coach-header-accordion-icon::after {
+		transform: rotate(135deg);
+	}
+
+	.coach-header-section-title:hover .coach-header-accordion-icon {
+		background: color-mix(in srgb, var(--wp--preset--color--accent-4) 20%, transparent);
+	}
+
+	.coach-header-section-content {
+		max-height: 0;
+		overflow: hidden;
+		transition: max-height 0.4s ease, opacity 0.35s ease;
+		opacity: 0;
+	}
+
+	.is-open .coach-header-section-content {
+		max-height: 1000px;
+		opacity: 1;
+	}
+
+	.coach-header-section-inner {
+		padding: 0 1rem 0.25rem;
+	}
+
+	.coach-header-era-label {
+		display: inline-block;
+		font-size: 0.75rem;
+		font-weight: 500;
+		padding: 0.25em 0.75em;
+		border-radius: 999px;
+		background: color-mix(in srgb, var(--wp--preset--color--accent-4) 12%, transparent);
+		color: var(--wp--preset--color--accent-4);
+		margin-bottom: 0.75rem;
+		letter-spacing: 0.02em;
+	}
+
+	.coach-approach p {
+		font-size: var(--wp--preset--font-size--medium);
+		line-height: 1.6;
+		color: var(--wp--preset--color--contrast);
+		margin: 0 0 0.4em;
+	}
+
+	.coach-athletes ul,
+	.coach-contributions ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.coach-athletes li,
+	.coach-contributions li {
+		padding: 0.3em 0;
+		padding-left: 1.2em;
+		position: relative;
+		color: var(--wp--preset--color--contrast);
+		font-size: var(--wp--preset--font-size--medium);
+		line-height: 1.5;
+	}
+
+	.coach-athletes li::before,
+	.coach-contributions li::before {
+		content: "\2014";
+		position: absolute;
+		left: 0;
+		color: var(--wp--preset--color--accent-4);
+		opacity: 0.4;
+	}
+}

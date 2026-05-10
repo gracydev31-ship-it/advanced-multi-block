@@ -1,0 +1,20 @@
+.wp-block-runpartner-coach-header .coach-header-editor-placeholder {
+	padding: 1.5rem;
+	background: color-mix(in srgb, var(--wp--preset--color--accent-5) 50%, transparent);
+	border: 1px dashed var(--wp--preset--color--accent-4);
+	border-radius: 8px;
+	text-align: center;
+}
+
+.wp-block-runpartner-coach-header .coach-header-editor-label {
+	font-size: var(--wp--preset--font-size--medium);
+	font-weight: 600;
+	color: var(--wp--preset--color--accent-4);
+	margin-bottom: 0.25rem;
+}
+
+.wp-block-runpartner-coach-header .coach-header-editor-desc {
+	font-size: var(--wp--preset--font-size--small);
+	color: var(--wp--preset--color--accent-4);
+	opacity: 0.7;
+}

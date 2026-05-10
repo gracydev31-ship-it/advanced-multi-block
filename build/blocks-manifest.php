@@ -23,26 +23,28 @@ return array(
 		'render' => 'file:./render.php',
 		'viewScript' => 'file:./view.js'
 	),
-	'coach-subtitle' => array(
+	'coach-header' => array(
 		'$schema' => 'https://schemas.wp.org/trunk/block.json',
 		'apiVersion' => 3,
-		'name' => 'runpartner/coach-subtitle',
+		'name' => 'runpartner/coach-header',
 		'version' => '0.1.0',
-		'title' => 'Coach Subtitle',
+		'title' => 'Coach Header',
 		'category' => 'widgets',
-		'icon' => 'editor-italic',
-		'description' => 'Display the coach subtitle from post meta.',
+		'icon' => 'groups',
+		'description' => 'Display the coach header with title, years, nationality, approach, athletes, and contributions.',
 		'example' => array(
 			
 		),
 		'supports' => array(
-			'html' => false
+			'html' => false,
+			'interactivity' => true
 		),
 		'textdomain' => 'runpartner',
 		'editorScript' => 'file:./index.js',
 		'editorStyle' => 'file:./index.css',
 		'style' => 'file:./style-index.css',
-		'render' => 'file:./render.php'
+		'render' => 'file:./render.php',
+		'viewScriptModule' => 'file:./view.js'
 	),
 	'event-distances' => array(
 		'$schema' => 'https://schemas.wp.org/trunk/block.json',

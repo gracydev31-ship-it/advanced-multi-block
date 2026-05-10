@@ -6,6 +6,6 @@ import './editor.scss';
 import Edit from './edit';
 import metadata from './block.json';
 
-registerBlockType( 'runpartner/coach-subtitle', {
+registerBlockType('runpartner/coach-header', {
 	edit: Edit,
-} );
+});
