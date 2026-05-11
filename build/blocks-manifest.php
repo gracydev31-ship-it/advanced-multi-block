@@ -1,6 +1,27 @@
 <?php
 // This file is generated. Do not modify it manually.
 return array(
+	'athlete-header' => array(
+		'$schema' => 'https://schemas.wp.org/trunk/block.json',
+		'apiVersion' => 3,
+		'name' => 'runpartner/athlete-header',
+		'version' => '0.1.0',
+		'title' => 'Athlete Header',
+		'category' => 'widgets',
+		'icon' => 'groups',
+		'description' => 'Display the athlete header with title, years, nationality, disciplines, and achievements.',
+		'example' => array(
+			
+		),
+		'supports' => array(
+			'html' => false
+		),
+		'textdomain' => 'runpartner',
+		'editorScript' => 'file:./index.js',
+		'editorStyle' => 'file:./index.css',
+		'style' => 'file:./style-index.css',
+		'render' => 'file:./render.php'
+	),
 	'banner' => array(
 		'$schema' => 'https://schemas.wp.org/trunk/block.json',
 		'apiVersion' => 3,
@@ -22,6 +43,27 @@ return array(
 		'style' => 'file:./style-index.css',
 		'render' => 'file:./render.php',
 		'viewScript' => 'file:./view.js'
+	),
+	'coach-athletes' => array(
+		'$schema' => 'https://schemas.wp.org/trunk/block.json',
+		'apiVersion' => 3,
+		'name' => 'runpartner/coach-athletes',
+		'version' => '0.1.0',
+		'title' => 'Coach Athletes',
+		'category' => 'widgets',
+		'icon' => 'groups',
+		'description' => 'Display athletes trained by this coach as clickable cards.',
+		'example' => array(
+			
+		),
+		'supports' => array(
+			'html' => false
+		),
+		'textdomain' => 'runpartner',
+		'editorScript' => 'file:./index.js',
+		'editorStyle' => 'file:./index.css',
+		'style' => 'file:./style-index.css',
+		'render' => 'file:./render.php'
 	),
 	'coach-header' => array(
 		'$schema' => 'https://schemas.wp.org/trunk/block.json',

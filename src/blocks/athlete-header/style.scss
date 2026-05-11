@@ -1,0 +1,77 @@
+.runpartner-athlete-header {
+	margin: 0;
+
+	.athlete-header-subtitle {
+		font-size: var(--wp--preset--font-size--medium);
+		font-weight: 300;
+		font-style: italic;
+		color: var(--wp--preset--color--accent-5);
+		line-height: 1.5;
+		margin-bottom: 0.5em;
+		letter-spacing: 0.01em;
+	}
+
+	.athlete-header-top {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.3em 0.5em;
+		margin-bottom: 1.25rem;
+	}
+
+	.athlete-header-title {
+		font-size: var(--wp--preset--font-size--x-large);
+		font-weight: 700;
+		color: var(--wp--preset--color--contrast);
+		line-height: 1.2;
+	}
+
+	.athlete-header-years {
+		font-size: var(--wp--preset--font-size--large);
+		font-weight: 300;
+		color: var(--wp--preset--color--accent-5);
+	}
+
+	.athlete-header-nationality {
+		font-size: var(--wp--preset--font-size--large);
+		font-weight: 300;
+		color: var(--wp--preset--color--accent-5);
+	}
+
+	.athlete-header-section {
+		margin-top: 1.25rem;
+	}
+
+	.athlete-header-section-label {
+		font-size: var(--wp--preset--font-size--small);
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--wp--preset--color--contrast);
+		opacity: 0.75;
+		margin-bottom: 0.5em;
+	}
+
+	.athlete-header-achievements-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.athlete-header-achievements-list li {
+		padding: 0.3em 0;
+		padding-left: 1.2em;
+		position: relative;
+		color: var(--wp--preset--color--contrast);
+		font-size: var(--wp--preset--font-size--medium);
+		line-height: 1.5;
+	}
+
+	.athlete-header-achievements-list li::before {
+		content: "\2014";
+		position: absolute;
+		left: 0;
+		color: var(--wp--preset--color--accent-4);
+		opacity: 0.4;
+	}
+}
