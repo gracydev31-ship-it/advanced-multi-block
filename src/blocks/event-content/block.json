@@ -1,0 +1,23 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "runpartner/event-content",
+	"version": "0.1.0",
+	"title": "Event Content",
+	"category": "widgets",
+	"icon": "calendar",
+	"description": "Tabbed event content with details, records, history, and reports.",
+	"example": {},
+	"supports": {
+		"html": false,
+		"interactivity": {
+			"clientNavigation": true
+		}
+	},
+	"textdomain": "runpartner",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"render": "file:./render.php",
+	"viewScriptModule": "file:./view.js"
+}
