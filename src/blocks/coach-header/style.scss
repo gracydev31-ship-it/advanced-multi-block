@@ -5,7 +5,7 @@
 		font-size: var(--wp--preset--font-size--medium);
 		font-weight: 300;
 		font-style: italic;
-		color: var(--wp--preset--color--accent-4);
+		color: var(--wp--preset--color--accent-5);
 		line-height: 1.5;
 		margin-bottom: 0.5em;
 		letter-spacing: 0.01em;
@@ -29,30 +29,29 @@
 	.coach-header-years {
 		font-size: var(--wp--preset--font-size--large);
 		font-weight: 300;
-		color: var(--wp--preset--color--accent-4);
+		color: var(--wp--preset--color--accent-5);
 	}
 
 	.coach-header-nationality {
 		font-size: var(--wp--preset--font-size--large);
 		font-weight: 300;
-		color: var(--wp--preset--color--accent-4);
+		color: var(--wp--preset--color--accent-5);
 	}
 
 	.coach-header-section {
 		margin-top: 1.25rem;
-		border-left: 2px solid color-mix(in srgb, var(--wp--preset--color--accent-4) 15%, transparent);
+		border-left: 2px solid color-mix(in srgb, var(--wp--preset--color--accent-4) 25%, transparent);
 		transition: border-color 0.3s ease;
 	}
 
 	.coach-header-section.is-open {
-		border-left-color: color-mix(in srgb, var(--wp--preset--color--accent-3) 40%, transparent);
+		border-left-color: color-mix(in srgb, var(--wp--preset--color--accent-3) 50%, transparent);
 	}
 
 	.coach-header-section-title {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
-		gap: 0.5em;
+		gap: 0.75em;
 		width: 100%;
 		padding: 0.75rem 1rem;
 		background: none;
@@ -62,12 +61,14 @@
 		font-weight: 600;
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
-		color: var(--wp--preset--color--accent-4);
+		color: var(--wp--preset--color--contrast);
+		opacity: 0.75;
 		text-align: left;
-		transition: color 0.3s ease;
+		transition: opacity 0.3s ease, color 0.3s ease;
 		font-family: inherit;
 
 		&:hover {
+			opacity: 1;
 			color: var(--wp--preset--color--contrast);
 		}
 	}
@@ -90,7 +91,7 @@
 		font-size: 1.1em;
 		font-weight: 300;
 		line-height: 1;
-		color: var(--wp--preset--color--accent-4);
+		color: var(--wp--preset--color--accent-5);
 		transition: transform 0.35s ease;
 	}
 
@@ -98,8 +99,16 @@
 		transform: rotate(135deg);
 	}
 
+	.is-open .coach-header-accordion-icon {
+		background: color-mix(in srgb, var(--wp--preset--color--lime-green) 18%, transparent);
+	}
+
 	.coach-header-section-title:hover .coach-header-accordion-icon {
 		background: color-mix(in srgb, var(--wp--preset--color--accent-4) 20%, transparent);
+	}
+
+	.is-open .coach-header-section-title:hover .coach-header-accordion-icon {
+		background: color-mix(in srgb, var(--wp--preset--color--lime-green) 25%, transparent);
 	}
 
 	.coach-header-section-content {
@@ -124,8 +133,8 @@
 		font-weight: 500;
 		padding: 0.25em 0.75em;
 		border-radius: 999px;
-		background: color-mix(in srgb, var(--wp--preset--color--accent-4) 12%, transparent);
-		color: var(--wp--preset--color--accent-4);
+		background: color-mix(in srgb, var(--wp--preset--color--accent-5) 15%, transparent);
+		color: var(--wp--preset--color--accent-5);
 		margin-bottom: 0.75rem;
 		letter-spacing: 0.02em;
 	}
