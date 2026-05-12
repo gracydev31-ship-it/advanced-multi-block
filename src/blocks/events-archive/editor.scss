@@ -1,0 +1,11 @@
+.rp-event-archive-block {
+	padding: 24px;
+	background: color-mix(in srgb, var(--wp--preset--color--accent-5) 10%, transparent);
+	border: 1px dashed var(--wp--preset--color--accent-5);
+	border-radius: 8px;
+	text-align: center;
+}
+
+.rp-event-archive-block p {
+	margin: 0.5em 0;
+}

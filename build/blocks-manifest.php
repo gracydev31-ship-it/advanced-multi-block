@@ -260,6 +260,31 @@ return array(
 		'style' => 'file:./style-index.css',
 		'render' => 'file:./render.php'
 	),
+	'events-archive' => array(
+		'$schema' => 'https://schemas.wp.org/trunk/block.json',
+		'apiVersion' => 3,
+		'name' => 'runpartner/events-archive',
+		'version' => '0.1.0',
+		'title' => 'Events Archive',
+		'category' => 'widgets',
+		'icon' => 'calendar',
+		'description' => 'Archive layout with featured event hero, upcoming events, and race recaps.',
+		'example' => array(
+			
+		),
+		'supports' => array(
+			'html' => false,
+			'interactivity' => array(
+				'clientNavigation' => true
+			)
+		),
+		'textdomain' => 'runpartner',
+		'editorScript' => 'file:./index.js',
+		'editorStyle' => 'file:./index.css',
+		'style' => 'file:./style-index.css',
+		'render' => 'file:./render.php',
+		'viewScriptModule' => 'file:./view.js'
+	),
 	'pace-calculator' => array(
 		'$schema' => 'https://schemas.wp.org/trunk/block.json',
 		'apiVersion' => 3,
