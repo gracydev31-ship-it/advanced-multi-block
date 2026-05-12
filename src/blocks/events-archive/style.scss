@@ -3,6 +3,8 @@
 }
 
 .event-archive-hero {
+	position: relative;
+	overflow: hidden;
 	margin-bottom: var(--wp--preset--spacing--60);
 
 	.wp-block-cover__inner-container {

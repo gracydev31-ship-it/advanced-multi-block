@@ -149,6 +149,7 @@ function rp_render_pagination(WP_Query $query, string $base_url, string $param):
 			<?php echo do_blocks('<!-- wp:pattern {"slug":"runpartner-theme/rounded"} /-->'); ?>
 			<div style="height:30vh" aria-hidden="true" class="wp-block-spacer"></div>
 			<div style="padding-bottom:var(--wp--preset--spacing--50)">
+				<div style="display:inline-block;background:var(--wp--preset--color--accent-7);padding:var(--wp--preset--spacing--40);border-radius:8px;">
 				<span class="event-archive-hero-tag">Featured Race</span>
 				<h1 class="event-archive-hero-title text-gradient"><?php echo esc_html($ftitle); ?></h1>
 				<?php if (!empty($fdate_fmt) || !empty($floc_str)) : ?>
@@ -157,7 +158,13 @@ function rp_render_pagination(WP_Query $query, string $base_url, string $param):
 					<?php echo esc_html($floc_str); ?>
 				</p>
 				<?php endif; ?>
-				<a href="<?php echo esc_url($flink); ?>" class="wp-block-button__link">View Event →</a>
+				<?php
+				echo do_blocks('<!-- wp:buttons -->
+<div class="wp-block-buttons"><!-- wp:button -->
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="' . esc_url($flink) . '">View Event →</a></div>
+<!-- /wp:button --></div>
+<!-- /wp:buttons -->'); ?>
+				</div>
 			</div>
 		</div>
 	</div>
