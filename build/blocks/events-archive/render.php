@@ -125,8 +125,6 @@ function rp_render_pagination(WP_Query $query, string $base_url, string $param):
 	<?php
 }
 ?>
-<div <?php echo get_block_wrapper_attributes(['class' => 'events-archive']); ?>>
-
 	<?php if ($featured_id) :
 		$thumb_id    = get_post_thumbnail_id($featured_id);
 		$thumb_url   = $thumb_id ? wp_get_attachment_image_url($thumb_id, 'full') : '';
@@ -143,9 +141,9 @@ function rp_render_pagination(WP_Query $query, string $base_url, string $param):
 				$fdate_fmt = $dt->format('M j, Y');
 			} catch (Exception $e) {}
 		}
-		$hero_style = $thumb_url ? 'background-image:url(' . esc_url($thumb_url) . ');' : '';
+		$hero_style = $thumb_url ? 'background-image:url(' . esc_url($thumb_url) . ');background-size:cover;background-repeat:no-repeat;background-position:center;' : '';
 	?>
-	<div class="wp-block-cover alignfull post-hero is-light event-archive-hero" style="<?php echo $hero_style; ?>min-height:50vh;padding:var(--wp--preset--spacing--30);">
+	<div class="wp-block-cover alignfull post-hero is-light event-archive-hero" style="<?php echo $hero_style; ?>min-height:50vh;padding-top:var(--wp--preset--spacing--30);padding-bottom:var(--wp--preset--spacing--30);padding-left:var(--wp--style--root--padding-left);padding-right:var(--wp--style--root--padding-right);">
 		<span aria-hidden="true" class="wp-block-cover__background has-background-dim-0 has-background-dim"></span>
 		<div class="wp-block-cover__inner-container">
 			<?php echo do_blocks('<!-- wp:pattern {"slug":"runpartner-theme/rounded"} /-->'); ?>
@@ -164,7 +162,7 @@ function rp_render_pagination(WP_Query $query, string $base_url, string $param):
 		</div>
 	</div>
 	<?php else : ?>
-	<div class="wp-block-cover alignfull post-hero is-light event-archive-hero event-archive-hero-fallback" style="min-height:50vh;padding:var(--wp--preset--spacing--30);background:linear-gradient(135deg,var(--wp--preset--color--base),var(--wp--preset--color--accent-3));">
+	<div class="wp-block-cover alignfull post-hero is-light event-archive-hero event-archive-hero-fallback" style="min-height:50vh;padding-top:var(--wp--preset--spacing--30);padding-bottom:var(--wp--preset--spacing--30);padding-left:var(--wp--style--root--padding-left);padding-right:var(--wp--style--root--padding-right);background:linear-gradient(135deg,var(--wp--preset--color--base),var(--wp--preset--color--accent-3));">
 		<span aria-hidden="true" class="wp-block-cover__background has-background-dim-0 has-background-dim"></span>
 		<div class="wp-block-cover__inner-container">
 			<?php echo do_blocks('<!-- wp:pattern {"slug":"runpartner-theme/rounded"} /-->'); ?>
@@ -175,6 +173,8 @@ function rp_render_pagination(WP_Query $query, string $base_url, string $param):
 		</div>
 	</div>
 	<?php endif; ?>
+
+<div <?php echo get_block_wrapper_attributes(['class' => 'events-archive']); ?>>
 
 	<?php if ($upcoming->have_posts()) : ?>
 	<div class="event-archive-section"
