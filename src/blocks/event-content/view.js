@@ -1,4 +1,4 @@
-import { store, withSyncEvent } from '@wordpress/interactivity';
+import { store, withSyncEvent, getContext } from '@wordpress/interactivity';
 
 store('runpartner/event-content', {
 	actions: {
@@ -9,5 +9,9 @@ store('runpartner/event-content', {
 			const { actions } = yield import('@wordpress/interactivity-router');
 			yield actions.navigate(href);
 		}),
+		toggleReport: (e) => {
+			const ctx = getContext();
+			ctx.isOpen = !ctx.isOpen;
+		},
 	},
 });

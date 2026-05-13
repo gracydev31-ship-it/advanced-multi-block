@@ -16,9 +16,9 @@ $event_date   = get_post_meta($post_id, '_rp_event_date', true);
 $course_record      = get_post_meta($post_id, '_rp_event_course_record', true);
 $course_record_holder = get_post_meta($post_id, '_rp_event_course_record_holder', true);
 $history      = get_post_meta($post_id, '_rp_event_history', true);
-$past_edition_id = (int) get_post_meta($post_id, '_rp_event_past_edition', true);
-
-$show_reports = $past_edition_id > 0 && get_post_status($past_edition_id) === 'publish';
+$editions     = get_post_meta($post_id, '_rp_event_editions', true);
+$editions     = is_array($editions) ? $editions : [];
+$show_reports = !empty($editions);
 
 $tabs = [
 	'details' => __('Details', 'runpartner'),
@@ -142,14 +142,43 @@ $base_url = get_permalink();
 
 		<?php elseif ('reports' === $section && $show_reports) : ?>
 			<div class="event-content-reports">
-				<?php
-				$past_post = get_post($past_edition_id);
-				if ($past_post) {
-					echo apply_filters('the_content', $past_post->post_content);
-				} else {
-					echo '<p class="event-content-empty">' . esc_html__('Report not found.', 'runpartner') . '</p>';
-				}
-				?>
+				<div class="event-content-reports-accordion">
+					<?php
+					usort($editions, function ($a, $b) {
+						return ($b['year'] ?? '') <=> ($a['year'] ?? '');
+					});
+					foreach ($editions as $entry) :
+						$year = $entry['year'] ?? '';
+						$report = $entry['report'] ?? '';
+						if (empty($year)) continue;
+					?>
+					<div
+						class="event-content-report-item"
+						data-wp-interactive="runpartner/event-content"
+						data-wp-context='{ "isOpen": false }'
+					>
+						<button
+							class="event-content-report-toggle"
+							data-wp-on--click="actions.toggleReport"
+							data-wp-bind--aria-expanded="context.isOpen"
+						>
+							<span class="event-content-report-year"><?php echo esc_html($year); ?></span>
+							<span class="event-content-report-icon" data-wp-bind--class="context.isOpen ? 'is-open' : ''">
+								<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+									<path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+							</span>
+						</button>
+						<div
+							class="event-content-report-content"
+							data-wp-bind--hidden="!context.isOpen"
+							hidden
+						>
+							<?php echo wp_kses_post($report); ?>
+						</div>
+					</div>
+					<?php endforeach; ?>
+				</div>
 			</div>
 		<?php endif; ?>
 	</div>
