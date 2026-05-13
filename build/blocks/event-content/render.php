@@ -13,11 +13,31 @@ $location     = get_post_meta($post_id, '_rp_event_location', true);
 $country      = get_post_meta($post_id, '_rp_event_country', true);
 $distances    = get_post_meta($post_id, '_rp_event_distances', true);
 $event_date   = get_post_meta($post_id, '_rp_event_date', true);
-$course_record      = get_post_meta($post_id, '_rp_event_course_record', true);
-$course_record_holder = get_post_meta($post_id, '_rp_event_course_record_holder', true);
-$history      = get_post_meta($post_id, '_rp_event_history', true);
-$editions     = get_post_meta($post_id, '_rp_event_editions', true);
-$editions     = is_array($editions) ? $editions : [];
+$records    = get_post_meta($post_id, '_rp_event_records', true);
+$records    = is_array($records) ? $records : [];
+
+// Migration fallback: read old flat records if new structure is empty
+if (empty($records)) {
+    $old_time   = get_post_meta($post_id, '_rp_event_course_record', true);
+    $old_holder = get_post_meta($post_id, '_rp_event_course_record_holder', true);
+    if (!empty($old_time) || !empty($old_holder)) {
+        $records = [
+            [
+                'category'    => 'men',
+                'distance'    => '',
+                'time'        => $old_time,
+                'holder'      => $old_holder,
+                'nationality' => '',
+                'year'        => '',
+            ],
+        ];
+    }
+}
+$categories = get_post_meta($post_id, '_rp_event_categories', true);
+$categories = is_array($categories) && !empty($categories) ? $categories : ['men', 'women'];
+$history    = get_post_meta($post_id, '_rp_event_history', true);
+$editions   = get_post_meta($post_id, '_rp_event_editions', true);
+$editions   = is_array($editions) ? $editions : [];
 $show_reports = !empty($editions);
 
 $tabs = [
@@ -110,20 +130,58 @@ $base_url = get_permalink();
 			</div>
 
 		<?php elseif ('records' === $section) : ?>
+			<?php
+			$active_cat = isset($_GET['record_cat']) ? sanitize_key($_GET['record_cat']) : $categories[0];
+			if (!in_array($active_cat, $categories, true)) {
+				$active_cat = $categories[0];
+			}
+
+			$grouped = [];
+			foreach ($records as $r) {
+				$cat = $r['category'] ?? 'other';
+				if (!in_array($cat, $categories, true)) continue;
+				$grouped[$cat][] = $r;
+			}
+			?>
 			<div class="event-content-records">
-				<?php if (!empty($course_record) || !empty($course_record_holder)) : ?>
-					<div class="event-content-records-card">
-						<?php if (!empty($course_record)) : ?>
-						<div class="event-content-records-time">
-							<span class="event-content-meta-label"><?php esc_html_e('Course Record', 'runpartner'); ?></span>
-							<span class="event-content-record-value"><?php echo esc_html($course_record); ?></span>
-						</div>
-						<?php endif; ?>
-						<?php if (!empty($course_record_holder)) : ?>
-						<div class="event-content-records-holder">
-							<span class="event-content-meta-label"><?php esc_html_e('Record Holder', 'runpartner'); ?></span>
-							<span class="event-content-record-value"><?php echo esc_html($course_record_holder); ?></span>
-						</div>
+				<?php if (!empty($records)) : ?>
+					<nav class="event-content-sub-tabs" role="tablist">
+						<?php foreach ($categories as $cat) : ?>
+							<a
+								href="<?php echo esc_url(add_query_arg(['section' => 'records', 'record_cat' => $cat], get_permalink())); ?>"
+								data-wp-on--click="actions.navigate"
+								class="event-content-sub-tab-button <?php echo $active_cat === $cat ? 'active' : ''; ?>"
+								role="tab"
+								aria-selected="<?php echo $active_cat === $cat ? 'true' : 'false'; ?>"
+							>
+								<?php echo esc_html(ucfirst($cat)); ?>
+							</a>
+						<?php endforeach; ?>
+					</nav>
+
+					<div class="event-content-records-panel" role="tabpanel">
+						<?php $cat_records = $grouped[$active_cat] ?? []; ?>
+						<?php if (!empty($cat_records)) : ?>
+							<div class="event-content-records-table">
+								<div class="event-content-records-table-header">
+									<span class="event-content-records-th"><?php esc_html_e('Distance', 'runpartner'); ?></span>
+									<span class="event-content-records-th"><?php esc_html_e('Time', 'runpartner'); ?></span>
+									<span class="event-content-records-th"><?php esc_html_e('Holder', 'runpartner'); ?></span>
+									<span class="event-content-records-th"><?php esc_html_e('Nationality', 'runpartner'); ?></span>
+									<span class="event-content-records-th"><?php esc_html_e('Year', 'runpartner'); ?></span>
+								</div>
+								<?php foreach ($cat_records as $r) : ?>
+								<div class="event-content-records-row">
+									<span class="event-content-records-td event-content-records-distance"><?php echo esc_html($r['distance'] ?? ''); ?></span>
+									<span class="event-content-records-td event-content-records-time"><?php echo esc_html($r['time'] ?? ''); ?></span>
+									<span class="event-content-records-td event-content-records-holder"><?php echo esc_html($r['holder'] ?? ''); ?></span>
+									<span class="event-content-records-td event-content-records-nationality"><?php echo esc_html($r['nationality'] ?? ''); ?></span>
+									<span class="event-content-records-td event-content-records-year"><?php echo esc_html($r['year'] ?? ''); ?></span>
+								</div>
+								<?php endforeach; ?>
+							</div>
+						<?php else : ?>
+							<p class="event-content-empty"><?php echo esc_html(sprintf(__('No %s course records recorded yet.', 'runpartner'), $active_cat)); ?></p>
 						<?php endif; ?>
 					</div>
 				<?php else : ?>
