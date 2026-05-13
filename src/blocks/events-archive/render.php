@@ -115,6 +115,17 @@ function rp_render_pagination(WP_Query $query, string $base_url, string $param):
 	}
 	$current = max(1, $query->get('paged') ?: 1);
 	$total   = $query->max_num_pages;
+	$range   = 2;
+	$pages   = [];
+
+	for ($i = 1; $i <= $total; $i++) {
+		if ($i === 1 || $i === $total || abs($i - $current) <= $range) {
+			if (!empty($pages) && end($pages) !== $i - 1) {
+				$pages[] = '…';
+			}
+			$pages[] = $i;
+		}
+	}
 	?>
 	<nav class="event-archive-pagination">
 		<?php if ($current > 1) : ?>
@@ -123,11 +134,15 @@ function rp_render_pagination(WP_Query $query, string $base_url, string $param):
 			   class="event-archive-pagination-link prev">←</a>
 		<?php endif; ?>
 
-		<?php for ($i = 1; $i <= $total; $i++) : ?>
-			<a href="<?php echo esc_url(add_query_arg($param, $i, $base_url)); ?>"
+		<?php foreach ($pages as $p) : ?>
+			<?php if ($p === '…') : ?>
+				<span class="event-archive-pagination-dots">…</span>
+			<?php else : ?>
+			<a href="<?php echo esc_url(add_query_arg($param, $p, $base_url)); ?>"
 			   data-wp-on--click="actions.navigate"
-			   class="event-archive-pagination-link <?php echo $i === $current ? 'active' : ''; ?>"><?php echo $i; ?></a>
-		<?php endfor; ?>
+			   class="event-archive-pagination-link <?php echo $p === $current ? 'active' : ''; ?>"><?php echo $p; ?></a>
+			<?php endif; ?>
+		<?php endforeach; ?>
 
 		<?php if ($current < $total) : ?>
 			<a href="<?php echo esc_url(add_query_arg($param, $current + 1, $base_url)); ?>"
@@ -196,34 +211,54 @@ function rp_render_pagination(WP_Query $query, string $base_url, string $param):
 
 <div <?php echo get_block_wrapper_attributes(['class' => 'events-archive alignwide']); ?>>
 
-	<?php if ($upcoming->have_posts()) : ?>
-	<div class="event-archive-section"
-		data-wp-interactive="runpartner/events-archive"
-		data-wp-router-region="upcoming-region">
-		<h2 class="event-archive-section-title">Upcoming Events</h2>
-		<div class="event-archive-grid">
-			<?php while ($upcoming->have_posts()) : $upcoming->the_post();
-				rp_render_event_card(get_the_ID());
-			endwhile;
-			wp_reset_postdata(); ?>
-		</div>
-		<?php rp_render_pagination($upcoming, $base_url, 'upcoming_page'); ?>
-	</div>
-	<?php endif; ?>
+	<?php $carousel_sections = [
+		[
+			'id'    => 'upcoming',
+			'title' => 'Upcoming Events',
+			'query' => $upcoming,
+			'param' => 'upcoming_page',
+		],
+		[
+			'id'    => 'recaps',
+			'title' => 'Race Recaps',
+			'query' => $recaps,
+			'param' => 'recaps_page',
+		],
+	];
 
-	<?php if ($recaps->have_posts()) : ?>
+	foreach ($carousel_sections as $cs) :
+		if (!$cs['query']->have_posts()) {
+			continue;
+		}
+		$region_id = $cs['id'] . '-region';
+	?>
 	<div class="event-archive-section"
 		data-wp-interactive="runpartner/events-archive"
-		data-wp-router-region="recaps-region">
-		<h2 class="event-archive-section-title">Race Recaps</h2>
-		<div class="event-archive-grid">
-			<?php while ($recaps->have_posts()) : $recaps->the_post();
-				rp_render_event_card(get_the_ID());
-			endwhile;
-			wp_reset_postdata(); ?>
+		data-wp-router-region="<?php echo $region_id; ?>"
+		data-wp-class--loading="state.core.router.isNavigation">
+		<h2 class="event-archive-section-title"><?php echo $cs['title']; ?></h2>
+		<div class="event-archive-carousel-wrapper"
+			data-carousel-id="<?php echo $cs['id']; ?>"
+			data-wp-init="callbacks.initCarousel"
+			data-wp-on--mouseenter="actions.pauseCarousel"
+			data-wp-on--mouseleave="actions.resumeCarousel">
+			<button class="event-archive-carousel-arrow prev"
+				data-wp-on--click="actions.carouselPrev"
+				aria-label="Previous slide">‹</button>
+			<div class="event-archive-carousel">
+				<div class="event-archive-grid">
+					<?php while ($cs['query']->have_posts()) : $cs['query']->the_post();
+						rp_render_event_card(get_the_ID());
+					endwhile;
+					wp_reset_postdata(); ?>
+				</div>
+			</div>
+			<button class="event-archive-carousel-arrow next"
+				data-wp-on--click="actions.carouselNext"
+				aria-label="Next slide">›</button>
 		</div>
-		<?php rp_render_pagination($recaps, $base_url, 'recaps_page'); ?>
+		<?php rp_render_pagination($cs['query'], $base_url, $cs['param']); ?>
 	</div>
-	<?php endif; ?>
+	<?php endforeach; ?>
 
 </div>
