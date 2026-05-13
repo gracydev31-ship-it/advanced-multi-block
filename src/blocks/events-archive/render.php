@@ -68,6 +68,7 @@ function rp_render_event_card(int $post_id): void {
 	$distances     = get_post_meta($post_id, '_rp_event_distances', true);
 	$loc_str       = trim($location . (!empty($location) && !empty($country) ? ', ' : '') . $country);
 	$formatted_date = '';
+	$thumb_url     = '';
 
 	if (!empty($date)) {
 		try {
@@ -76,22 +77,34 @@ function rp_render_event_card(int $post_id): void {
 		} catch (Exception $e) {
 		}
 	}
+
+	$thumb_id = get_post_thumbnail_id($post_id);
+	if ($thumb_id) {
+		$thumb_url = wp_get_attachment_image_url($thumb_id, 'medium_large');
+	}
 	?>
 	<a href="<?php echo esc_url($permalink); ?>" class="event-archive-card">
-		<?php if (!empty($formatted_date)) : ?>
-			<span class="event-archive-card-date"><?php echo esc_html($formatted_date); ?></span>
+		<?php if (!empty($thumb_url)) : ?>
+		<div class="event-archive-card-image">
+			<img src="<?php echo esc_url($thumb_url); ?>" alt="<?php echo esc_attr($title); ?>" loading="lazy" />
+		</div>
 		<?php endif; ?>
-		<h3 class="event-archive-card-title"><?php echo esc_html($title); ?></h3>
-		<?php if (!empty($loc_str)) : ?>
-			<span class="event-archive-card-location"><?php echo esc_html($loc_str); ?></span>
-		<?php endif; ?>
-		<?php if (!empty($distances) && is_array($distances)) : ?>
-			<div class="event-archive-card-distances">
-			<?php foreach ($distances as $d) : ?>
-				<span class="event-content-distance-pill"><?php echo esc_html($d); ?></span>
-			<?php endforeach; ?>
-			</div>
-		<?php endif; ?>
+		<div class="event-archive-card-body">
+			<?php if (!empty($formatted_date)) : ?>
+				<span class="event-archive-card-date"><?php echo esc_html($formatted_date); ?></span>
+			<?php endif; ?>
+			<h3 class="event-archive-card-title"><?php echo esc_html($title); ?></h3>
+			<?php if (!empty($loc_str)) : ?>
+				<span class="event-archive-card-location"><?php echo esc_html($loc_str); ?></span>
+			<?php endif; ?>
+			<?php if (!empty($distances) && is_array($distances)) : ?>
+				<div class="event-archive-card-distances">
+				<?php foreach ($distances as $d) : ?>
+					<span class="event-archive-card-pill"><?php echo esc_html($d); ?></span>
+				<?php endforeach; ?>
+				</div>
+			<?php endif; ?>
+		</div>
 	</a>
 	<?php
 }
