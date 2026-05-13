@@ -148,7 +148,7 @@ function rp_render_pagination(WP_Query $query, string $base_url, string $param):
 		<div class="wp-block-cover__inner-container">
 			<?php echo do_blocks('<!-- wp:pattern {"slug":"runpartner-theme/rounded"} /-->'); ?>
 			<div style="height:30vh" aria-hidden="true" class="wp-block-spacer"></div>
-			<div style="padding-bottom:var(--wp--preset--spacing--50)">
+			<div style="max-width:var(--wp--style--global--wide-size);margin-inline:auto;width:100%;padding-bottom:var(--wp--preset--spacing--50)">
 				<div style="display:inline-block;background:var(--wp--preset--color--accent-7);padding:var(--wp--preset--spacing--40);border-radius:8px;">
 				<span class="event-archive-hero-tag">Featured Race</span>
 				<h1 class="event-archive-hero-title text-gradient"><?php echo esc_html($ftitle); ?></h1>
@@ -174,14 +174,14 @@ function rp_render_pagination(WP_Query $query, string $base_url, string $param):
 		<div class="wp-block-cover__inner-container">
 			<?php echo do_blocks('<!-- wp:pattern {"slug":"runpartner-theme/rounded"} /-->'); ?>
 			<div style="height:30vh" aria-hidden="true" class="wp-block-spacer"></div>
-			<div style="padding-bottom:var(--wp--preset--spacing--50)">
+			<div style="max-width:var(--wp--style--global--wide-size);margin-inline:auto;width:100%;padding-bottom:var(--wp--preset--spacing--50)">
 				<h1 class="event-archive-hero-title text-gradient">Events</h1>
 			</div>
 		</div>
 	</div>
 	<?php endif; ?>
 
-<div <?php echo get_block_wrapper_attributes(['class' => 'events-archive']); ?>>
+<div <?php echo get_block_wrapper_attributes(['class' => 'events-archive alignwide']); ?>>
 
 	<?php if ($upcoming->have_posts()) : ?>
 	<div class="event-archive-section"
