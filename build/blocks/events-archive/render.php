@@ -251,18 +251,27 @@ function rp_render_sidebar(string $taxonomy, string $current_region, string $cur
 			<a href="<?php echo esc_url(rp_region_url($base_url, $slug)); ?>"
 			   data-wp-on--click="actions.navigate"
 			   class="event-archive-sidebar-item <?php echo $is_active ? 'active' : ''; ?>">
-				<?php echo esc_html($term->name); ?>
+				<span><?php echo esc_html($term->name); ?></span>
+				<?php if (!empty($children)) : ?>
+				<span class="event-archive-sidebar-chevron">
+					<svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+						<path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+				</span>
+				<?php endif; ?>
 			</a>
-			<?php if ($is_active && !empty($children)) : ?>
-			<div class="event-archive-sidebar-children">
-				<a href="<?php echo esc_url(rp_region_url($base_url, $slug)); ?>"
-				   data-wp-on--click="actions.navigate"
-				   class="event-archive-sidebar-child <?php echo empty($current_state) ? 'active' : ''; ?>">All <?php echo esc_html($term->name); ?></a>
-				<?php foreach ($children as $child) : ?>
-				<a href="<?php echo esc_url(rp_region_url($base_url, $slug, $child->slug)); ?>"
-				   data-wp-on--click="actions.navigate"
-				   class="event-archive-sidebar-child <?php echo $current_state === $child->slug ? 'active' : ''; ?>"><?php echo esc_html($child->name); ?></a>
-				<?php endforeach; ?>
+			<?php if (!empty($children)) : ?>
+			<div class="event-archive-sidebar-children <?php echo $is_active ? 'expanded' : ''; ?>">
+				<div class="event-archive-sidebar-children-scroll">
+					<a href="<?php echo esc_url(rp_region_url($base_url, $slug)); ?>"
+					   data-wp-on--click="actions.navigate"
+					   class="event-archive-sidebar-child <?php echo empty($current_state) ? 'active' : ''; ?>">All <?php echo esc_html($term->name); ?></a>
+					<?php foreach ($children as $child) : ?>
+					<a href="<?php echo esc_url(rp_region_url($base_url, $slug, $child->slug)); ?>"
+					   data-wp-on--click="actions.navigate"
+					   class="event-archive-sidebar-child <?php echo $current_state === $child->slug ? 'active' : ''; ?>"><?php echo esc_html($child->name); ?></a>
+					<?php endforeach; ?>
+				</div>
 			</div>
 			<?php endif; ?>
 		<?php endforeach; ?>
