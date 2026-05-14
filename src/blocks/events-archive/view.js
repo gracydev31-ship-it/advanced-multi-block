@@ -20,22 +20,15 @@ store('runpartner/events-archive', {
 			const href = e.currentTarget.href;
 			if (!href) return;
 
-			const link = e.currentTarget;
-			const targetRegion = link.closest('[data-wp-router-region]');
-			const regionId = targetRegion
-				? targetRegion.getAttribute('data-wp-router-region')
-				: null;
+			const section = e.currentTarget.closest('.event-archive-section');
+			const scrollTarget = section?.querySelector('.event-archive-section-title')?.id;
 
 			const { actions } = yield import('@wordpress/interactivity-router');
 			yield actions.navigate(href);
 
-			if (regionId) {
-				const region = document.querySelector(
-					`[data-wp-router-region="${regionId}"]`
-				);
-				if (region) {
-					region.scrollIntoView({ behavior: 'smooth', block: 'start' });
-				}
+			if (scrollTarget) {
+				const el = document.getElementById(scrollTarget);
+				el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 			}
 		}),
 

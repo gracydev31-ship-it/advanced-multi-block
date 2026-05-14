@@ -3,11 +3,61 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
-$post_type = 'events';
-$today     = date('Y-m-d');
+$post_type       = 'events';
+$today           = date('Y-m-d');
+$taxonomy        = 'event_region';
+$base_url        = get_post_type_archive_link($post_type);
 
-$upcoming_page = isset($_GET['upcoming_page']) ? max(1, (int) $_GET['upcoming_page']) : 1;
-$recaps_page   = isset($_GET['recaps_page']) ? max(1, (int) $_GET['recaps_page']) : 1;
+$region = isset($_GET['region']) ? sanitize_key($_GET['region']) : 'india';
+$state  = isset($_GET['state']) ? sanitize_key($_GET['state']) : '';
+
+$top_terms = get_terms([
+	'taxonomy'   => $taxonomy,
+	'parent'     => 0,
+	'hide_empty' => false,
+	'orderby'    => 'name',
+	'order'      => 'ASC',
+]);
+
+$valid_regions = ['all'];
+$region_slugs  = [];
+foreach ($top_terms as $t) {
+	$valid_regions[] = $t->slug;
+	$region_slugs[$t->slug] = $t->term_id;
+}
+$region = in_array($region, $valid_regions, true) ? $region : 'india';
+
+$child_terms = [];
+$valid_states = [];
+if ($region !== 'all' && isset($region_slugs[$region])) {
+	$child_terms = get_terms([
+		'taxonomy'   => $taxonomy,
+		'parent'     => $region_slugs[$region],
+		'hide_empty' => false,
+		'orderby'    => 'name',
+		'order'      => 'ASC',
+	]);
+	foreach ($child_terms as $ct) {
+		$valid_states[] = $ct->slug;
+	}
+}
+if (!empty($valid_states) && !in_array($state, $valid_states, true)) {
+	$state = '';
+}
+
+function rp_build_region_tax_query(string $taxonomy, string $region, string $state = ''): array {
+	if ($region === 'all') {
+		return [];
+	}
+	$terms = $state ? [$state] : [$region];
+	return [[
+		'taxonomy' => $taxonomy,
+		'field'    => 'slug',
+		'terms'    => $terms,
+	]];
+}
+
+$tax_query = rp_build_region_tax_query($taxonomy, $region, $state);
 
 $featured = get_posts([
 	'post_type'      => $post_type,
@@ -15,6 +65,7 @@ $featured = get_posts([
 	'meta_query'     => [
 		['key' => '_rp_event_featured', 'value' => '1', 'compare' => '='],
 	],
+	'tax_query'      => $tax_query ?: null,
 ]);
 
 if (empty($featured)) {
@@ -27,10 +78,14 @@ if (empty($featured)) {
 		'meta_type'      => 'DATE',
 		'orderby'        => 'meta_value',
 		'order'          => 'ASC',
+		'tax_query'      => $tax_query ?: null,
 	]);
 }
 
 $featured_id = !empty($featured) ? $featured[0]->ID : null;
+
+$upcoming_page = isset($_GET['upcoming_page']) ? max(1, (int) $_GET['upcoming_page']) : 1;
+$recaps_page   = isset($_GET['recaps_page']) ? max(1, (int) $_GET['recaps_page']) : 1;
 
 $upcoming = new WP_Query([
 	'post_type'      => $post_type,
@@ -43,6 +98,7 @@ $upcoming = new WP_Query([
 	'meta_type'      => 'DATE',
 	'orderby'        => 'meta_value',
 	'order'          => 'ASC',
+	'tax_query'      => $tax_query ?: null,
 ]);
 
 $recaps = new WP_Query([
@@ -55,9 +111,8 @@ $recaps = new WP_Query([
 	'meta_type'      => 'DATE',
 	'orderby'        => 'meta_value',
 	'order'          => 'DESC',
+	'tax_query'      => $tax_query ?: null,
 ]);
-
-$base_url = get_post_type_archive_link($post_type);
 
 function rp_render_event_card(int $post_id): void {
 	$title         = get_the_title($post_id);
@@ -152,6 +207,62 @@ function rp_render_pagination(WP_Query $query, string $base_url, string $param):
 	</nav>
 	<?php
 }
+
+function rp_region_url(string $base_url, string $region_slug, string $state_slug = ''): string {
+	$args = ['region' => $region_slug];
+	if ($state_slug) {
+		$args['state'] = $state_slug;
+	}
+	return add_query_arg($args, $base_url);
+}
+
+function rp_render_sidebar(string $taxonomy, string $current_region, string $current_state, array $top_terms, string $base_url): void {
+	$display_order = ['india', 'africa-continent', 'american-continent', 'asia', 'europe'];
+	$terms_by_slug = [];
+	foreach ($top_terms as $t) {
+		$terms_by_slug[$t->slug] = $t;
+	}
+	?>
+	<div class="event-archive-sidebar">
+		<h3 class="event-archive-sidebar-title">Filter by Region</h3>
+		<div class="event-archive-sidebar-list">
+		<?php foreach ($display_order as $slug) :
+			if (!isset($terms_by_slug[$slug])) { continue; }
+			$term      = $terms_by_slug[$slug];
+			$is_active = $current_region === $slug;
+			$children  = get_terms([
+				'taxonomy'   => $taxonomy,
+				'parent'     => $term->term_id,
+				'hide_empty' => false,
+				'orderby'    => 'name',
+				'order'      => 'ASC',
+			]);
+		?>
+			<a href="<?php echo esc_url(rp_region_url($base_url, $slug)); ?>"
+			   data-wp-on--click="actions.navigate"
+			   class="event-archive-sidebar-item <?php echo $is_active ? 'active' : ''; ?>">
+				<?php echo esc_html($term->name); ?>
+			</a>
+			<?php if ($is_active && !empty($children)) : ?>
+			<div class="event-archive-sidebar-children">
+				<a href="<?php echo esc_url(rp_region_url($base_url, $slug)); ?>"
+				   data-wp-on--click="actions.navigate"
+				   class="event-archive-sidebar-child <?php echo empty($current_state) ? 'active' : ''; ?>">All <?php echo esc_html($term->name); ?></a>
+				<?php foreach ($children as $child) : ?>
+				<a href="<?php echo esc_url(rp_region_url($base_url, $slug, $child->slug)); ?>"
+				   data-wp-on--click="actions.navigate"
+				   class="event-archive-sidebar-child <?php echo $current_state === $child->slug ? 'active' : ''; ?>"><?php echo esc_html($child->name); ?></a>
+				<?php endforeach; ?>
+			</div>
+			<?php endif; ?>
+		<?php endforeach; ?>
+			<a href="<?php echo esc_url(rp_region_url($base_url, 'all')); ?>"
+			   data-wp-on--click="actions.navigate"
+			   class="event-archive-sidebar-item <?php echo $current_region === 'all' ? 'active' : ''; ?>">All Events</a>
+		</div>
+	</div>
+	<?php
+}
 ?>
 	<?php if ($featured_id) :
 		$thumb_id    = get_post_thumbnail_id($featured_id);
@@ -209,7 +320,13 @@ function rp_render_pagination(WP_Query $query, string $base_url, string $param):
 	</div>
 	<?php endif; ?>
 
-<div <?php echo get_block_wrapper_attributes(['class' => 'events-archive alignwide']); ?>>
+<div <?php echo get_block_wrapper_attributes(['class' => 'events-archive alignwide']); ?>
+	data-wp-interactive="runpartner/events-archive"
+	data-wp-router-region="events-archive-region"
+	data-wp-class--loading="state.core.router.isNavigation">
+
+<div class="wp-block-columns alignwide" style="gap:var(--wp--preset--spacing--50);">
+	<div class="wp-block-column" style="flex-basis:70%">
 
 	<?php $carousel_sections = [
 		[
@@ -230,13 +347,10 @@ function rp_render_pagination(WP_Query $query, string $base_url, string $param):
 		if (!$cs['query']->have_posts()) {
 			continue;
 		}
-		$region_id = $cs['id'] . '-region';
 	?>
 	<div class="event-archive-section"
-		data-wp-interactive="runpartner/events-archive"
-		data-wp-router-region="<?php echo $region_id; ?>"
 		data-wp-class--loading="state.core.router.isNavigation">
-		<h2 class="event-archive-section-title"><?php echo $cs['title']; ?></h2>
+		<h2 class="event-archive-section-title" id="section-<?php echo esc_attr($cs['id']); ?>"><?php echo $cs['title']; ?></h2>
 		<div class="event-archive-carousel-wrapper"
 			data-carousel-id="<?php echo $cs['id']; ?>"
 			data-wp-init="callbacks.initCarousel"
@@ -260,5 +374,11 @@ function rp_render_pagination(WP_Query $query, string $base_url, string $param):
 		<?php rp_render_pagination($cs['query'], $base_url, $cs['param']); ?>
 	</div>
 	<?php endforeach; ?>
+
+	</div>
+	<div class="wp-block-column" style="flex-basis:30%">
+		<?php rp_render_sidebar($taxonomy, $region, $state, $top_terms, $base_url); ?>
+	</div>
+</div>
 
 </div>
