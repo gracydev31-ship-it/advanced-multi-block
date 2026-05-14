@@ -11,8 +11,16 @@ $base_url        = get_post_type_archive_link($post_type);
 $region = isset($_GET['region']) ? sanitize_key($_GET['region']) : 'india';
 $state  = isset($_GET['state']) ? sanitize_key($_GET['state']) : '';
 
+$upcoming_page = isset($_GET['upcoming_page']) ? max(1, (int) $_GET['upcoming_page']) : 1;
+$recaps_page   = isset($_GET['recaps_page']) ? max(1, (int) $_GET['recaps_page']) : 1;
+
 $pagination_base = add_query_arg(
-	array_filter(['region' => $region, 'state' => $state]),
+	array_filter([
+		'region'        => $region,
+		'state'         => $state,
+		'upcoming_page' => $upcoming_page > 1 ? $upcoming_page : null,
+		'recaps_page'   => $recaps_page > 1 ? $recaps_page : null,
+	]),
 	$base_url
 );
 
@@ -88,9 +96,6 @@ if (empty($featured)) {
 }
 
 $featured_id = !empty($featured) ? $featured[0]->ID : null;
-
-$upcoming_page = isset($_GET['upcoming_page']) ? max(1, (int) $_GET['upcoming_page']) : 1;
-$recaps_page   = isset($_GET['recaps_page']) ? max(1, (int) $_GET['recaps_page']) : 1;
 
 $upcoming = new WP_Query([
 	'post_type'      => $post_type,
