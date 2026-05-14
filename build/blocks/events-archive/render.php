@@ -11,6 +11,11 @@ $base_url        = get_post_type_archive_link($post_type);
 $region = isset($_GET['region']) ? sanitize_key($_GET['region']) : 'india';
 $state  = isset($_GET['state']) ? sanitize_key($_GET['state']) : '';
 
+$pagination_base = add_query_arg(
+	array_filter(['region' => $region, 'state' => $state]),
+	$base_url
+);
+
 $top_terms = get_terms([
 	'taxonomy'   => $taxonomy,
 	'parent'     => 0,
@@ -371,7 +376,7 @@ function rp_render_sidebar(string $taxonomy, string $current_region, string $cur
 				data-wp-on--click="actions.carouselNext"
 				aria-label="Next slide">›</button>
 		</div>
-		<?php rp_render_pagination($cs['query'], $base_url, $cs['param']); ?>
+		<?php rp_render_pagination($cs['query'], $pagination_base, $cs['param']); ?>
 	</div>
 	<?php endforeach; ?>
 

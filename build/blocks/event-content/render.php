@@ -5,7 +5,7 @@ if (!$post_id) {
 }
 
 $section    = isset($_GET['section']) ? sanitize_key($_GET['section']) : 'details';
-$valid      = ['details', 'records', 'history', 'reports'];
+$valid      = ['details', 'records', 'history', 'course', 'reports'];
 $section    = in_array($section, $valid, true) ? $section : 'details';
 
 $subtitle     = get_post_meta($post_id, '_rp_event_subtitle', true);
@@ -35,14 +35,16 @@ if (empty($records)) {
 }
 $categories = get_post_meta($post_id, '_rp_event_categories', true);
 $categories = is_array($categories) && !empty($categories) ? $categories : ['men', 'women'];
-$history    = get_post_meta($post_id, '_rp_event_history', true);
-$editions   = get_post_meta($post_id, '_rp_event_editions', true);
+$history        = get_post_meta($post_id, '_rp_event_history', true);
+$course_overview = get_post_meta($post_id, '_rp_event_course_overview', true);
+$editions       = get_post_meta($post_id, '_rp_event_editions', true);
 $editions   = is_array($editions) ? $editions : [];
 $show_reports = !empty($editions);
 
 $tabs = [
 	'details' => __('Details', 'runpartner'),
 	'records' => __('Records', 'runpartner'),
+	'course'  => __('Course', 'runpartner'),
 	'history' => __('History', 'runpartner'),
 	'reports' => __('Reports', 'runpartner'),
 ];
@@ -195,6 +197,15 @@ $base_url = get_permalink();
 					<div class="event-content-history-text"><?php echo wp_kses_post($history); ?></div>
 				<?php else : ?>
 					<p class="event-content-empty"><?php esc_html_e('No history has been documented for this event yet.', 'runpartner'); ?></p>
+				<?php endif; ?>
+			</div>
+
+		<?php elseif ('course' === $section) : ?>
+			<div class="event-content-course">
+				<?php if (!empty($course_overview)) : ?>
+					<div class="event-content-course-text"><?php echo wp_kses_post($course_overview); ?></div>
+				<?php else : ?>
+					<p class="event-content-empty"><?php esc_html_e('No course overview available for this event yet.', 'runpartner'); ?></p>
 				<?php endif; ?>
 			</div>
 
