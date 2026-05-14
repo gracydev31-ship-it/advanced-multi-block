@@ -78,7 +78,6 @@ $featured = get_posts([
 	'meta_query'     => [
 		['key' => '_rp_event_featured', 'value' => '1', 'compare' => '='],
 	],
-	'tax_query'      => $tax_query ?: null,
 ]);
 
 if (empty($featured)) {
@@ -91,7 +90,6 @@ if (empty($featured)) {
 		'meta_type'      => 'DATE',
 		'orderby'        => 'meta_value',
 		'order'          => 'ASC',
-		'tax_query'      => $tax_query ?: null,
 	]);
 }
 
