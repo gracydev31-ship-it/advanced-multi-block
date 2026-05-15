@@ -339,12 +339,12 @@ function rp_render_sidebar(string $taxonomy, string $current_region, string $cur
 	</div>
 	<?php endif; ?>
 
-<div <?php echo get_block_wrapper_attributes(['class' => 'events-archive alignwide']); ?>
+<div <?php echo get_block_wrapper_attributes(['class' => 'events-archive']); ?>
 	data-wp-interactive="runpartner/events-archive"
 	data-wp-router-region="events-archive-region"
 	data-wp-class--loading="state.core.router.isNavigation">
 
-<div class="wp-block-columns alignwide" style="gap:var(--wp--preset--spacing--50);">
+<div class="wp-block-columns" style="gap:var(--wp--preset--spacing--50);">
 	<div class="wp-block-column" style="flex-basis:70%">
 
 	<?php $carousel_sections = [

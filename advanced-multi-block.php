@@ -28,29 +28,35 @@ function register_blocks() {
    $build_dir = __DIR__ . '/build/blocks';
    $manifest  = __DIR__ . '/build/blocks-manifest.php';
 
-   // WP 6.8+: one-call convenience.
-   if ( function_exists( 'wp_register_block_types_from_metadata_collection' ) ) {
-       wp_register_block_types_from_metadata_collection( $build_dir, $manifest );
-       return;
-   }
+   // Deprecated blocks — source files kept, but excluded from registration.
+   // event-year kept — represents first edition year, used later.
+   $excluded  = ['event-location', 'event-month', 'event-distances'];
 
-   // WP 6.7: index the collection, then loop and register each block from metadata.
-   if ( function_exists( 'wp_register_block_metadata_collection' ) ) {
+   // Register all blocks from manifest (path string required by WP APIs).
+   if ( function_exists( 'wp_register_block_types_from_metadata_collection' ) ) {
+       // WP 6.8+: one-call convenience.
+       wp_register_block_types_from_metadata_collection( $build_dir, $manifest );
+   } elseif ( function_exists( 'wp_register_block_metadata_collection' ) ) {
+       // WP 6.7: index collection, then loop.
        wp_register_block_metadata_collection( $build_dir, $manifest );
        $manifest_data = require $manifest;
        foreach ( array_keys( $manifest_data ) as $block_type ) {
            register_block_type_from_metadata( $build_dir . '/' . $block_type );
        }
-       return;
-   }
-
-   // WP 5.5-6.6: no collection APIs; just loop the manifest directly.
-   if ( function_exists( 'register_block_type_from_metadata' ) ) {
+   } else {
+       // WP 5.5-6.6: loop directly.
        $manifest_data = require $manifest;
        foreach ( array_keys( $manifest_data ) as $block_type ) {
            register_block_type_from_metadata( $build_dir . '/' . $block_type );
        }
-       return;
+   }
+
+   // Unregister excluded blocks by their registered names.
+   $manifest_data = require $manifest;
+   foreach ( $excluded as $slug ) {
+       if ( isset( $manifest_data[ $slug ] ) ) {
+           unregister_block_type( $manifest_data[ $slug ]['name'] );
+       }
    }
 }
 add_action( 'init', 'register_blocks' );
