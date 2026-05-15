@@ -3,20 +3,10 @@
 }
 
 .runpartner-event-registration-button {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0;
-	padding: 0.875rem 2.25rem;
 	background: var(--wp--preset--color--orange);
 	color: var(--wp--preset--color--base);
-	font-size: var(--wp--preset--font-size--medium);
-	font-weight: 600;
-	letter-spacing: 0.02em;
-	text-decoration: none;
 	border: none;
-	border-radius: 6px;
-	transition: all 0.2s ease;
+	text-decoration: none;
 }
 
 .runpartner-event-registration-button:hover {

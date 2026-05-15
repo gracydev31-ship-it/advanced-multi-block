@@ -14,7 +14,11 @@ $website = esc_url( $website );
 ?>
 
 <div <?php echo get_block_wrapper_attributes( array( 'class' => 'runpartner-event-website' ) ); ?>>
-	<a href="<?php echo $website; ?>" class="runpartner-event-website-button" target="_blank" rel="noopener noreferrer">
-		<?php echo esc_html__( 'Official Website', 'runpartner' ); ?>
-	</a>
+	<div class="wp-block-buttons">
+		<div class="wp-block-button is-style-outline">
+			<a class="wp-block-button__link wp-element-button" href="<?php echo $website; ?>" target="_blank" rel="noopener noreferrer">
+				<?php echo esc_html__( 'Official Website', 'runpartner' ); ?>
+			</a>
+		</div>
+	</div>
 </div>

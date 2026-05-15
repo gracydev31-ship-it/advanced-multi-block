@@ -14,7 +14,11 @@ $registration = esc_url( $registration );
 ?>
 
 <div <?php echo get_block_wrapper_attributes( array( 'class' => 'runpartner-event-registration' ) ); ?>>
-	<a href="<?php echo $registration; ?>" class="runpartner-event-registration-button" target="_blank" rel="noopener noreferrer">
-		<?php echo esc_html__( 'Register Now', 'runpartner' ); ?>
-	</a>
+	<div class="wp-block-buttons">
+		<div class="wp-block-button">
+			<a class="wp-block-button__link wp-element-button" href="<?php echo $registration; ?>" target="_blank" rel="noopener noreferrer">
+				<?php echo esc_html__( 'Register Now', 'runpartner' ); ?>
+			</a>
+		</div>
+	</div>
 </div>

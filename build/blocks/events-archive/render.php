@@ -317,12 +317,11 @@ function rp_render_sidebar(string $taxonomy, string $current_region, string $cur
 					<?php echo esc_html($floc_str); ?>
 				</p>
 				<?php endif; ?>
-				<?php
-				echo do_blocks('<!-- wp:buttons -->
-<div class="wp-block-buttons"><!-- wp:button -->
-<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="' . esc_url($flink) . '">View Event →</a></div>
-<!-- /wp:button --></div>
-<!-- /wp:buttons -->'); ?>
+				<div class="wp-block-buttons">
+					<div class="wp-block-button">
+						<a class="wp-block-button__link wp-element-button" href="<?php echo esc_url($flink); ?>">View Event →</a>
+					</div>
+				</div>
 				</div>
 			</div>
 		</div>
