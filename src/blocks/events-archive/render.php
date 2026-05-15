@@ -225,18 +225,21 @@ function rp_region_url(string $base_url, string $region_slug, string $state_slug
 }
 
 function rp_render_sidebar(string $taxonomy, string $current_region, string $current_state, array $top_terms, string $base_url): void {
-	$display_order = ['india', 'africa-continent', 'american-continent', 'asia', 'europe'];
-	$terms_by_slug = [];
-	foreach ($top_terms as $t) {
-		$terms_by_slug[$t->slug] = $t;
-	}
+	usort($top_terms, function ($a, $b) {
+		if ($a->slug === 'india') {
+			return -1;
+		}
+		if ($b->slug === 'india') {
+			return 1;
+		}
+		return strcasecmp($a->name, $b->name);
+	});
 	?>
 	<div class="event-archive-sidebar">
 		<h3 class="event-archive-sidebar-title">Filter by Region</h3>
 		<div class="event-archive-sidebar-list">
-		<?php foreach ($display_order as $slug) :
-			if (!isset($terms_by_slug[$slug])) { continue; }
-			$term      = $terms_by_slug[$slug];
+		<?php foreach ($top_terms as $term) :
+			$slug = $term->slug;
 			$is_active = $current_region === $slug;
 			$children  = get_terms([
 				'taxonomy'   => $taxonomy,
