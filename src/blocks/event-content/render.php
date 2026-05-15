@@ -42,7 +42,7 @@ $editions   = is_array($editions) ? $editions : [];
 $show_reports = !empty($editions);
 
 $tabs = [
-	'details' => __('Details', 'runpartner'),
+	'details' => __('Overview', 'runpartner'),
 	'records' => __('Records', 'runpartner'),
 	'course'  => __('Course', 'runpartner'),
 	'history' => __('History', 'runpartner'),
@@ -55,22 +55,25 @@ $base_url = get_permalink();
 	data-wp-interactive="runpartner/event-content"
 	data-wp-router-region="event-content-region"
 >
-	<nav class="event-content-tab-bar" role="tablist">
-		<?php foreach ($tabs as $tab_key => $tab_label) : ?>
-			<?php if ('reports' === $tab_key && !$show_reports) continue; ?>
-			<a
-				href="<?php echo esc_url(add_query_arg('section', $tab_key, $base_url)); ?>"
-				data-wp-on--click="actions.navigate"
-				class="event-content-tab-button <?php echo $section === $tab_key ? 'active' : ''; ?>"
-				role="tab"
-				aria-selected="<?php echo $section === $tab_key ? 'true' : 'false'; ?>"
-			>
-				<?php echo esc_html($tab_label); ?>
-			</a>
-		<?php endforeach; ?>
-	</nav>
-
-	<div class="event-content-tab-panel" role="tabpanel">
+	<div class="event-content-layout">
+		<aside class="event-content-sidebar">
+			<nav class="event-content-tab-list" role="tablist">
+				<?php foreach ($tabs as $tab_key => $tab_label) : ?>
+					<?php if ('reports' === $tab_key && !$show_reports) continue; ?>
+					<a
+						href="<?php echo esc_url(add_query_arg('section', $tab_key, $base_url)); ?>"
+						data-wp-on--click="actions.navigate"
+						class="event-content-tab-item <?php echo $section === $tab_key ? 'active' : ''; ?>"
+						role="tab"
+						aria-selected="<?php echo $section === $tab_key ? 'true' : 'false'; ?>"
+					>
+						<?php echo esc_html($tab_label); ?>
+					</a>
+				<?php endforeach; ?>
+			</nav>
+		</aside>
+		<div class="event-content-main">
+			<div class="event-content-tab-panel" role="tabpanel">
 		<?php if ('details' === $section) : ?>
 			<div class="event-content-details">
 				<?php if (!empty($subtitle) || !empty($location) || !empty($country) || !empty($distances) || !empty($event_date)) : ?>
@@ -250,5 +253,7 @@ $base_url = get_permalink();
 				</div>
 			</div>
 		<?php endif; ?>
+	</div>
+		</div>
 	</div>
 </div>
