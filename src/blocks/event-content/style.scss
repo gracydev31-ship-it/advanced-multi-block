@@ -426,3 +426,100 @@
 	line-height: 1.7;
 	color: var(--wp--preset--color--contrast);
 }
+
+.event-content-athletes-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--wp--preset--spacing--20);
+}
+
+.event-content-athlete-card {
+	display: flex;
+	gap: var(--wp--preset--spacing--30);
+	align-items: center;
+	padding: var(--wp--preset--spacing--30) var(--wp--preset--spacing--40);
+	border: 1px solid var(--wp--preset--color--accent-6);
+	border-radius: 8px;
+	background: color-mix(in srgb, var(--wp--preset--color--base) 97%, var(--wp--preset--color--contrast));
+	transition: background 0.2s ease, box-shadow 0.2s ease;
+
+	&:hover {
+		background: color-mix(in srgb, var(--wp--preset--color--base) 92%, var(--wp--preset--color--contrast));
+		box-shadow: var(--wp--preset--shadow--sm);
+	}
+}
+
+.event-content-athlete-avatar {
+	flex-shrink: 0;
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	overflow: hidden;
+	background: var(--wp--preset--color--accent-7);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.event-content-athlete-image {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.event-content-athlete-initials {
+	font-size: var(--wp--preset--font-size--large);
+	font-weight: 700;
+	color: var(--wp--preset--color--accent-4);
+	line-height: 1;
+}
+
+.event-content-athlete-info {
+	flex: 1;
+	min-width: 0;
+}
+
+.event-content-athlete-link {
+	font-size: var(--wp--preset--font-size--medium);
+	font-weight: 600;
+	color: var(--wp--preset--color--contrast);
+	text-decoration: none;
+
+	&:hover {
+		color: var(--wp--preset--color--lime-green);
+		text-decoration: underline;
+	}
+}
+
+.event-content-athlete-performance {
+	font-size: var(--wp--preset--font-size--small);
+	color: var(--wp--preset--color--accent-4);
+	margin: 2px 0 0;
+	line-height: 1.4;
+}
+
+.event-content-athlete-year {
+	display: inline-block;
+	margin-top: 4px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: var(--wp--preset--color--orange);
+	background: color-mix(in srgb, var(--wp--preset--color--orange) 12%, transparent);
+	padding: 1px 8px;
+	border-radius: 4px;
+}
+
+@media (max-width: 600px) {
+	.event-content-athlete-card {
+		padding: var(--wp--preset--spacing--20) var(--wp--preset--spacing--30);
+	}
+
+	.event-content-athlete-avatar {
+		width: 44px;
+		height: 44px;
+	}
+
+	.event-content-athlete-performance {
+		font-size: 0.8rem;
+	}
+}

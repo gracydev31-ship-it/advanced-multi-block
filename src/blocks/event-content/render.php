@@ -5,7 +5,7 @@ if (!$post_id) {
 }
 
 $section    = isset($_GET['section']) ? sanitize_key($_GET['section']) : 'details';
-$valid      = ['details', 'records', 'history', 'course', 'reports'];
+$valid      = ['details', 'records', 'history', 'course', 'reports', 'athletes'];
 $section    = in_array($section, $valid, true) ? $section : 'details';
 
 $subtitle     = get_post_meta($post_id, '_rp_event_subtitle', true);
@@ -47,6 +47,7 @@ $tabs = [
 	'course'  => __('Course', 'runpartner'),
 	'history' => __('History', 'runpartner'),
 	'reports' => __('Reports', 'runpartner'),
+	'athletes' => __('Famous Athletes', 'runpartner'),
 ];
 $base_url = get_permalink();
 ?>
@@ -251,6 +252,60 @@ $base_url = get_permalink();
 					</div>
 					<?php endforeach; ?>
 				</div>
+			</div>
+
+		<?php elseif ('athletes' === $section) : ?>
+			<?php
+			$famous_athletes = get_post_meta($post_id, '_rp_event_famous_athletes', true);
+			$famous_athletes = is_array($famous_athletes) ? $famous_athletes : [];
+			?>
+			<div class="event-content-athletes">
+				<?php if (!empty($famous_athletes)) :
+					$athlete_ids = array_filter(array_map('absint', array_column($famous_athletes, 'athlete_id')));
+					if (!empty($athlete_ids)) :
+						$athlete_posts = get_posts([
+							'post_type'      => 'athlete',
+							'post__in'       => $athlete_ids,
+							'posts_per_page' => count($athlete_ids),
+							'orderby'        => 'post__in',
+						]);
+						$athlete_map = [];
+						foreach ($athlete_posts as $ap) {
+							$athlete_map[$ap->ID] = $ap;
+						}
+					?>
+					<div class="event-content-athletes-list">
+						<?php foreach ($famous_athletes as $fa) :
+							$aid = absint($fa['athlete_id'] ?? 0);
+							if (!isset($athlete_map[$aid])) continue;
+							$athlete = $athlete_map[$aid];
+						?>
+						<div class="event-content-athlete-card">
+							<div class="event-content-athlete-avatar">
+								<?php if (has_post_thumbnail($aid)) : ?>
+									<?php echo get_the_post_thumbnail($aid, 'thumbnail', ['class' => 'event-content-athlete-image', 'loading' => 'lazy']); ?>
+								<?php else : ?>
+									<div class="event-content-athlete-initials"><?php echo esc_html(mb_substr(get_the_title($aid), 0, 1)); ?></div>
+								<?php endif; ?>
+							</div>
+							<div class="event-content-athlete-info">
+								<a href="<?php echo esc_url(get_permalink($aid)); ?>" class="event-content-athlete-link">
+									<?php echo esc_html(get_the_title($aid)); ?>
+								</a>
+								<?php if (!empty($fa['performance'])) : ?>
+									<p class="event-content-athlete-performance"><?php echo esc_html($fa['performance']); ?></p>
+								<?php endif; ?>
+								<?php if (!empty($fa['year'])) : ?>
+									<span class="event-content-athlete-year"><?php echo esc_html($fa['year']); ?></span>
+								<?php endif; ?>
+							</div>
+						</div>
+						<?php endforeach; ?>
+					</div>
+					<?php endif; ?>
+				<?php else : ?>
+					<p class="event-content-empty"><?php esc_html_e('No famous athletes have been associated with this event yet.', 'runpartner'); ?></p>
+				<?php endif; ?>
 			</div>
 		<?php endif; ?>
 	</div>
