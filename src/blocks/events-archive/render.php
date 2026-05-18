@@ -80,16 +80,61 @@ $featured = get_posts([
 	],
 ]);
 
+$upcoming_meta = [
+	'relation' => 'OR',
+	[
+		'key'     => '_rp_event_date_end',
+		'value'   => $today,
+		'compare' => '>=',
+		'type'    => 'DATE',
+	],
+	[
+		'relation' => 'AND',
+		[
+			'key'     => '_rp_event_date_end',
+			'compare' => 'NOT EXISTS',
+		],
+		[
+			'key'     => '_rp_event_date',
+			'value'   => $today,
+			'compare' => '>=',
+			'type'    => 'DATE',
+		],
+	],
+];
+
+$recaps_meta = [
+	'relation' => 'OR',
+	[
+		'key'     => '_rp_event_date_end',
+		'value'   => $today,
+		'compare' => '<',
+		'type'    => 'DATE',
+	],
+	[
+		'relation' => 'AND',
+		[
+			'key'     => '_rp_event_date_end',
+			'compare' => 'NOT EXISTS',
+		],
+		[
+			'key'     => '_rp_event_date',
+			'value'   => $today,
+			'compare' => '<',
+			'type'    => 'DATE',
+		],
+	],
+];
+
 if (empty($featured)) {
 	$featured = get_posts([
 		'post_type'      => $post_type,
 		'posts_per_page' => 1,
+		'meta_query'     => $upcoming_meta,
 		'meta_key'       => '_rp_event_date',
-		'meta_value'     => $today,
-		'meta_compare'   => '>=',
-		'meta_type'      => 'DATE',
 		'orderby'        => 'meta_value',
 		'order'          => 'ASC',
+		'meta_type'      => 'DATE',
 	]);
 }
 
@@ -100,12 +145,11 @@ $upcoming = new WP_Query([
 	'posts_per_page' => 6,
 	'paged'          => $upcoming_page,
 	'post__not_in'   => $featured_id ? [$featured_id] : [],
+	'meta_query'     => $upcoming_meta,
 	'meta_key'       => '_rp_event_date',
-	'meta_value'     => $today,
-	'meta_compare'   => '>=',
-	'meta_type'      => 'DATE',
 	'orderby'        => 'meta_value',
 	'order'          => 'ASC',
+	'meta_type'      => 'DATE',
 	'tax_query'      => $tax_query ?: null,
 ]);
 
@@ -113,33 +157,51 @@ $recaps = new WP_Query([
 	'post_type'      => $post_type,
 	'posts_per_page' => 6,
 	'paged'          => $recaps_page,
+	'meta_query'     => $recaps_meta,
 	'meta_key'       => '_rp_event_date',
-	'meta_value'     => $today,
-	'meta_compare'   => '<',
-	'meta_type'      => 'DATE',
 	'orderby'        => 'meta_value',
 	'order'          => 'DESC',
+	'meta_type'      => 'DATE',
 	'tax_query'      => $tax_query ?: null,
 ]);
+
+function rp_format_date_range(string $start, string $end = ''): string {
+	if (empty($start)) {
+		return '';
+	}
+	try {
+		$start_dt = new DateTime($start);
+		if (empty($end)) {
+			return $start_dt->format('M j, Y');
+		}
+		$end_dt = new DateTime($end);
+		$start_month = $start_dt->format('n');
+		$end_month   = $end_dt->format('n');
+		$start_year  = $start_dt->format('Y');
+		$end_year    = $end_dt->format('Y');
+		if ($start_year !== $end_year) {
+			return $start_dt->format('M j, Y') . ' – ' . $end_dt->format('M j, Y');
+		}
+		if ($start_month !== $end_month) {
+			return $start_dt->format('M j') . ' – ' . $end_dt->format('M j, Y');
+		}
+		return $start_dt->format('M j') . '–' . $end_dt->format('j, Y');
+	} catch (Exception $e) {
+		return $start;
+	}
+}
 
 function rp_render_event_card(int $post_id): void {
 	$title         = get_the_title($post_id);
 	$permalink     = get_permalink($post_id);
 	$date          = get_post_meta($post_id, '_rp_event_date', true);
+	$date_end      = get_post_meta($post_id, '_rp_event_date_end', true);
 	$location      = get_post_meta($post_id, '_rp_event_location', true);
 	$country       = get_post_meta($post_id, '_rp_event_country', true);
 	$distances     = get_post_meta($post_id, '_rp_event_distances', true);
 	$loc_str       = trim($location . (!empty($location) && !empty($country) ? ', ' : '') . $country);
-	$formatted_date = '';
+	$formatted_date = rp_format_date_range($date, $date_end);
 	$thumb_url     = '';
-
-	if (!empty($date)) {
-		try {
-			$dt = new DateTime($date);
-			$formatted_date = $dt->format('M j, Y');
-		} catch (Exception $e) {
-		}
-	}
 
 	$thumb_id = get_post_thumbnail_id($post_id);
 	if ($thumb_id) {
@@ -290,16 +352,11 @@ function rp_render_sidebar(string $taxonomy, string $current_region, string $cur
 		$ftitle      = get_the_title($featured_id);
 		$flink       = get_permalink($featured_id);
 		$fdate       = get_post_meta($featured_id, '_rp_event_date', true);
+		$fdate_end   = get_post_meta($featured_id, '_rp_event_date_end', true);
 		$floc        = get_post_meta($featured_id, '_rp_event_location', true);
 		$fcountry    = get_post_meta($featured_id, '_rp_event_country', true);
 		$floc_str    = trim($floc . (!empty($floc) && !empty($fcountry) ? ', ' : '') . $fcountry);
-		$fdate_fmt   = '';
-		if (!empty($fdate)) {
-			try {
-				$dt = new DateTime($fdate);
-				$fdate_fmt = $dt->format('M j, Y');
-			} catch (Exception $e) {}
-		}
+		$fdate_fmt   = rp_format_date_range($fdate, $fdate_end);
 		$hero_style = $thumb_url ? 'background-image:url(' . esc_url($thumb_url) . ');background-size:cover;background-repeat:no-repeat;background-position:center;' : '';
 	?>
 	<div class="wp-block-cover alignfull post-hero is-light event-archive-hero" style="<?php echo $hero_style; ?>min-height:50vh;padding-top:var(--wp--preset--spacing--30);padding-bottom:var(--wp--preset--spacing--30);padding-left:var(--wp--style--root--padding-left);padding-right:var(--wp--style--root--padding-right);">

@@ -8,13 +8,57 @@ $section    = isset($_GET['section']) ? sanitize_key($_GET['section']) : 'detail
 $valid      = ['details', 'records', 'history', 'course', 'reports', 'athletes'];
 $section    = in_array($section, $valid, true) ? $section : 'details';
 
-$subtitle     = get_post_meta($post_id, '_rp_event_subtitle', true);
-$location     = get_post_meta($post_id, '_rp_event_location', true);
-$country      = get_post_meta($post_id, '_rp_event_country', true);
-$distances    = get_post_meta($post_id, '_rp_event_distances', true);
-$event_date   = get_post_meta($post_id, '_rp_event_date', true);
+$subtitle      = get_post_meta($post_id, '_rp_event_subtitle', true);
+$location      = get_post_meta($post_id, '_rp_event_location', true);
+$country       = get_post_meta($post_id, '_rp_event_country', true);
+$distances     = get_post_meta($post_id, '_rp_event_distances', true);
+$event_date    = get_post_meta($post_id, '_rp_event_date', true);
+$event_date_end = get_post_meta($post_id, '_rp_event_date_end', true);
+
+/**
+ * Format an event date range for display.
+ * Examples: "Sep 10, 2025", "Sep 10–13, 2025", "Sep 30 – Oct 2, 2025"
+ */
+$format_date_range = function (string $start, string $end = ''): string {
+    if (empty($start)) {
+        return '';
+    }
+    try {
+        $start_dt = new DateTime($start);
+        if (empty($end)) {
+            return date_i18n('F j, Y', $start_dt->getTimestamp());
+        }
+        $end_dt = new DateTime($end);
+        $start_month = $start_dt->format('n');
+        $end_month   = $end_dt->format('n');
+        $start_year  = $start_dt->format('Y');
+        $end_year    = $end_dt->format('Y');
+        if ($start_year !== $end_year) {
+            return date_i18n('F j, Y', $start_dt->getTimestamp()) . ' – ' . date_i18n('F j, Y', $end_dt->getTimestamp());
+        }
+        if ($start_month !== $end_month) {
+            return date_i18n('F j', $start_dt->getTimestamp()) . ' – ' . date_i18n('F j, Y', $end_dt->getTimestamp());
+        }
+        return date_i18n('F j', $start_dt->getTimestamp()) . '–' . date_i18n('j, Y', $end_dt->getTimestamp());
+    } catch (Exception $e) {
+        return $start;
+    }
+};
+
 $records    = get_post_meta($post_id, '_rp_event_records', true);
 $records    = is_array($records) ? $records : [];
+
+// Normalize records: map old format (category/distance) to new (gender/event_name)
+$records = array_map(function ($r) {
+    if (!isset($r['gender']) && isset($r['category'])) {
+        $r['gender'] = $r['category'];
+    }
+    if (!isset($r['event_name']) && isset($r['distance'])) {
+        $r['event_name'] = $r['distance'];
+    }
+    unset($r['category'], $r['distance']);
+    return $r;
+}, $records);
 
 // Migration fallback: read old flat records if new structure is empty
 if (empty($records)) {
@@ -23,8 +67,8 @@ if (empty($records)) {
     if (!empty($old_time) || !empty($old_holder)) {
         $records = [
             [
-                'category'    => 'men',
-                'distance'    => '',
+                'gender'      => 'men',
+                'event_name'  => '',
                 'time'        => $old_time,
                 'holder'      => $old_holder,
                 'nationality' => '',
@@ -33,8 +77,14 @@ if (empty($records)) {
         ];
     }
 }
-$categories = get_post_meta($post_id, '_rp_event_categories', true);
-$categories = is_array($categories) && !empty($categories) ? $categories : ['men', 'women'];
+
+// Derive available genders from actual records (backward compat: default to men, women)
+$genders = array_values(array_unique(array_filter(array_column($records, 'gender'))));
+if (empty($genders)) {
+    $genders = ['men', 'women'];
+}
+// Maintain a stable order: men first, then women, then anything else
+$genders = array_intersect(['men', 'women'], $genders);
 $history        = get_post_meta($post_id, '_rp_event_history', true);
 $course_overview = get_post_meta($post_id, '_rp_event_course_overview', true);
 $editions       = get_post_meta($post_id, '_rp_event_editions', true);
@@ -77,7 +127,7 @@ $base_url = get_permalink();
 			<div class="event-content-tab-panel" role="tabpanel">
 		<?php if ('details' === $section) : ?>
 			<div class="event-content-details">
-				<?php if (!empty($subtitle) || !empty($location) || !empty($country) || !empty($distances) || !empty($event_date)) : ?>
+				<?php if (!empty($subtitle) || !empty($location) || !empty($country) || !empty($distances) || !empty($event_date) || !empty($event_date_end)) : ?>
 				<div class="event-content-intro-card">
 					<?php if (!empty($subtitle)) : ?>
 						<p class="event-content-subtitle"><?php echo esc_html($subtitle); ?></p>
@@ -104,6 +154,11 @@ $base_url = get_permalink();
 					<?php endif; ?>
 
 					<?php if (!empty($event_date)) : ?>
+					<div class="event-content-meta-row">
+						<span class="event-content-meta-label"><?php esc_html_e('Date', 'runpartner'); ?></span>
+						<span class="event-content-meta-value"><?php echo esc_html($format_date_range($event_date, $event_date_end)); ?></span>
+					</div>
+
 					<div class="event-content-countdown-badge">
 						<?php
 						try {
@@ -137,48 +192,48 @@ $base_url = get_permalink();
 
 		<?php elseif ('records' === $section) : ?>
 			<?php
-			$active_cat = isset($_GET['record_cat']) ? sanitize_key($_GET['record_cat']) : $categories[0];
-			if (!in_array($active_cat, $categories, true)) {
-				$active_cat = $categories[0];
+			$active_gender = isset($_GET['gender']) ? sanitize_key($_GET['gender']) : $genders[0];
+			if (!in_array($active_gender, $genders, true)) {
+				$active_gender = $genders[0];
 			}
 
 			$grouped = [];
 			foreach ($records as $r) {
-				$cat = $r['category'] ?? 'other';
-				if (!in_array($cat, $categories, true)) continue;
-				$grouped[$cat][] = $r;
+				$g = $r['gender'] ?? 'men';
+				if (!in_array($g, $genders, true)) continue;
+				$grouped[$g][] = $r;
 			}
 			?>
 			<div class="event-content-records">
 				<?php if (!empty($records)) : ?>
 					<nav class="event-content-sub-tabs" role="tablist">
-						<?php foreach ($categories as $cat) : ?>
+						<?php foreach ($genders as $g) : ?>
 							<a
-								href="<?php echo esc_url(add_query_arg(['section' => 'records', 'record_cat' => $cat], get_permalink())); ?>"
+								href="<?php echo esc_url(add_query_arg(['section' => 'records', 'gender' => $g], get_permalink())); ?>"
 								data-wp-on--click="actions.navigate"
-								class="event-content-sub-tab-button <?php echo $active_cat === $cat ? 'active' : ''; ?>"
+								class="event-content-sub-tab-button <?php echo $active_gender === $g ? 'active' : ''; ?>"
 								role="tab"
-								aria-selected="<?php echo $active_cat === $cat ? 'true' : 'false'; ?>"
+								aria-selected="<?php echo $active_gender === $g ? 'true' : 'false'; ?>"
 							>
-								<?php echo esc_html(ucfirst($cat)); ?>
+								<?php echo esc_html(ucfirst($g)); ?>
 							</a>
 						<?php endforeach; ?>
 					</nav>
 
 					<div class="event-content-records-panel" role="tabpanel">
-						<?php $cat_records = $grouped[$active_cat] ?? []; ?>
-						<?php if (!empty($cat_records)) : ?>
+						<?php $gender_records = $grouped[$active_gender] ?? []; ?>
+						<?php if (!empty($gender_records)) : ?>
 							<div class="event-content-records-table">
 								<div class="event-content-records-table-header">
-									<span class="event-content-records-th"><?php esc_html_e('Distance', 'runpartner'); ?></span>
+									<span class="event-content-records-th"><?php esc_html_e('Event', 'runpartner'); ?></span>
 									<span class="event-content-records-th"><?php esc_html_e('Time', 'runpartner'); ?></span>
 									<span class="event-content-records-th"><?php esc_html_e('Holder', 'runpartner'); ?></span>
 									<span class="event-content-records-th"><?php esc_html_e('Nationality', 'runpartner'); ?></span>
 									<span class="event-content-records-th"><?php esc_html_e('Year', 'runpartner'); ?></span>
 								</div>
-								<?php foreach ($cat_records as $r) : ?>
+								<?php foreach ($gender_records as $r) : ?>
 								<div class="event-content-records-row">
-									<span class="event-content-records-td event-content-records-distance"><?php echo esc_html($r['distance'] ?? ''); ?></span>
+									<span class="event-content-records-td event-content-records-event"><?php echo esc_html($r['event_name'] ?? ''); ?></span>
 									<span class="event-content-records-td event-content-records-time"><?php echo esc_html($r['time'] ?? ''); ?></span>
 									<span class="event-content-records-td event-content-records-holder"><?php echo esc_html($r['holder'] ?? ''); ?></span>
 									<span class="event-content-records-td event-content-records-nationality"><?php echo esc_html($r['nationality'] ?? ''); ?></span>
@@ -187,7 +242,7 @@ $base_url = get_permalink();
 								<?php endforeach; ?>
 							</div>
 						<?php else : ?>
-							<p class="event-content-empty"><?php echo esc_html(sprintf(__('No %s course records recorded yet.', 'runpartner'), $active_cat)); ?></p>
+							<p class="event-content-empty"><?php echo esc_html(sprintf(__('No %s course records recorded yet.', 'runpartner'), $active_gender)); ?></p>
 						<?php endif; ?>
 					</div>
 				<?php else : ?>
